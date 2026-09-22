@@ -1,0 +1,198 @@
+import { useState } from 'react'
+import { useNavigate } from 'react-router-dom'
+import { Search, AlertCircle } from 'lucide-react'
+import IdentifierTypeSelect from './IdentifierTypeSelect'
+import { useCustomer } from '@/context/CustomerContext'
+import {
+  CUSTOMERS,
+  lookupCustomer,
+  type IdentifierType,
+  type CustomerProfile,
+} from '@/data/customers'
+
+const PLACEHOLDERS: Record<IdentifierType, string> = {
+  CIF: 'e.g. 100234567',
+  'Account Number': 'e.g. 1234567890',
+  'ID Number': 'e.g. 9801015432089',
+  'CIF (Business)': 'e.g. 200891234',
+}
+
+interface Props {
+  /** Called after a successful lookup — optional, context + navigate always runs */
+  onFound?: (customer: CustomerProfile) => void
+}
+
+export default function CustomerLookup({ onFound }: Props) {
+  const { setCustomer } = useCustomer()
+  const navigate = useNavigate()
+
+  const [idType, setIdType] = useState<IdentifierType>('CIF')
+  const [value, setValue] = useState('')
+  const [loading, setLoading] = useState(false)
+  const [loadMsg, setLoadMsg] = useState('')
+  const [notFound, setNotFound] = useState(false)
+
+  const handleSearch = async (searchValue = value, searchType = idType) => {
+    if (!searchValue.trim()) return
+    setNotFound(false)
+    setLoading(true)
+    setLoadMsg('Connecting to CIF database…')
+
+    // Simulated latency — mimics a real CIF database round-trip for demo purposes
+    await new Promise((r) => setTimeout(r, 900))
+    setLoadMsg('Loading customer profile…')
+    await new Promise((r) => setTimeout(r, 700))
+
+    const found = lookupCustomer(searchType, searchValue)
+    setLoading(false)
+
+    if (found) {
+      setCustomer(found)
+      onFound?.(found)
+      navigate('/')
+    } else {
+      setNotFound(true)
+    }
+  }
+
+  const quickLookup = (customer: (typeof CUSTOMERS)[0]) => {
+    setIdType('CIF')
+    setValue(customer.cif)
+    handleSearch(customer.cif, 'CIF')
+  }
+
+  if (loading) {
+    return (
+      <div className="flex flex-col items-center justify-center gap-6 py-20 text-center">
+        <div className="w-14 h-14 rounded-full border-4 border-brand-200 dark:border-brand-900 border-t-brand-600 animate-spin" />
+        <div>
+          <p className="text-sm font-medium text-gray-700 dark:text-gray-300 animate-pulse">
+            {loadMsg}
+          </p>
+          <p className="text-xs text-gray-400 dark:text-gray-600 mt-1">This may take a moment</p>
+        </div>
+      </div>
+    )
+  }
+
+  return (
+    <div className="flex flex-col items-center justify-center min-h-[calc(100vh-140px)] px-4">
+      <div className="w-full max-w-md">
+        {/* Header */}
+        <div className="text-center mb-8">
+          <div className="w-14 h-14 rounded-2xl bg-brand-600 flex items-center justify-center mx-auto mb-4">
+            <svg width="28" height="28" viewBox="0 0 28 28" fill="none">
+              <path
+                d="M7 7L14 21L21 7"
+                stroke="white"
+                strokeWidth="2.5"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              />
+            </svg>
+          </div>
+          <h1 className="text-2xl font-bold text-gray-900 dark:text-white">Customer Lookup</h1>
+          <p className="text-sm text-gray-500 dark:text-gray-500 mt-1.5 max-w-xs mx-auto">
+            Find a customer by CIF, account number, or South African ID to view spending insights.
+          </p>
+        </div>
+
+        {/* Form card */}
+        <div className="card p-6 flex flex-col gap-4">
+          {/* Identifier type */}
+          <IdentifierTypeSelect
+            value={idType}
+            onChange={(v) => {
+              setIdType(v)
+              setValue('')
+              setNotFound(false)
+            }}
+          />
+
+          {/* Value input */}
+          <div className="relative">
+            <span className="absolute top-2 left-4 text-xs font-semibold tracking-wide text-gray-400 dark:text-gray-500">
+              Customer Identifier
+            </span>
+            <input
+              type="text"
+              value={value}
+              onChange={(e) => {
+                setValue(e.target.value)
+                setNotFound(false)
+              }}
+              onKeyDown={(e) => e.key === 'Enter' && handleSearch()}
+              placeholder={PLACEHOLDERS[idType]}
+              className="
+                w-full px-4 pt-6 pb-3 rounded-xl text-sm font-medium
+                border-2 border-gray-200 dark:border-[#2D2C44]
+                bg-white dark:bg-[#1C1B2E]
+                text-gray-800 dark:text-gray-200
+                placeholder:text-gray-300 dark:placeholder:text-gray-600
+                focus:outline-none focus:border-brand-500
+                hover:border-gray-300 dark:hover:border-[#3D3C54]
+                transition-colors
+              "
+            />
+          </div>
+
+          {/* Not found error */}
+          {notFound && (
+            <div className="flex items-start gap-2.5 px-3 py-2.5 rounded-xl bg-rose-50 dark:bg-rose-500/10 border border-rose-200 dark:border-rose-500/20">
+              <AlertCircle size={15} className="text-rose-500 flex-shrink-0 mt-0.5" />
+              <p className="text-xs text-rose-600 dark:text-rose-400">
+                No customer found for the provided identifier. Please check and try again.
+              </p>
+            </div>
+          )}
+
+          {/* Submit */}
+          <button
+            onClick={() => handleSearch()}
+            disabled={!value.trim()}
+            className="btn-primary justify-center py-3 text-sm disabled:opacity-40 disabled:cursor-not-allowed">
+            <Search size={15} />
+            Look up customer
+          </button>
+        </div>
+
+        {/* Demo quick-access */}
+        <div className="mt-6">
+          <p className="text-xs text-center text-gray-400 dark:text-gray-600 mb-3 uppercase tracking-wider font-semibold">
+            Demo profiles
+          </p>
+          <div className="flex flex-col gap-2">
+            {CUSTOMERS.map((c) => (
+              <button
+                key={c.cif}
+                onClick={() => quickLookup(c)}
+                className="flex items-center gap-3 px-4 py-3 rounded-xl
+                           bg-white dark:bg-[#1C1B2E]
+                           border border-gray-100 dark:border-[#2D2C44]
+                           hover:border-brand-300 dark:hover:border-brand-600/50
+                           hover:bg-brand-50/30 dark:hover:bg-brand-600/5
+                           transition-all duration-150 text-left group">
+                <div
+                  className="w-8 h-8 rounded-full flex items-center justify-center text-white text-xs font-bold flex-shrink-0"
+                  style={{ background: c.segmentColor }}>
+                  {c.initials}
+                </div>
+                <div className="min-w-0 flex-1">
+                  <p className="text-sm font-semibold text-gray-800 dark:text-gray-200 group-hover:text-brand-600 dark:group-hover:text-brand-400 transition-colors truncate">
+                    {c.name}
+                  </p>
+                  <p className="text-xs text-gray-400 dark:text-gray-600">
+                    CIF {c.cif} · Acc {c.accountNumber} · {c.segment}
+                  </p>
+                </div>
+                <span className="text-xs text-brand-400 dark:text-brand-500 opacity-0 group-hover:opacity-100 transition-opacity flex-shrink-0">
+                  Look up →
+                </span>
+              </button>
+            ))}
+          </div>
+        </div>
+      </div>
+    </div>
+  )
+}
