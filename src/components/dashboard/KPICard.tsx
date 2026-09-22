@@ -6,7 +6,7 @@ interface KPICardProps {
   iconBg: string
   label: string
   value: string
-  change: number
+  change?: number
   sparkData: { v: number }[]
   lineColor: string
 }
@@ -20,7 +20,7 @@ export default function KPICard({
   sparkData,
   lineColor,
 }: KPICardProps) {
-  const isPositive = change >= 0
+  const isPositive = (change ?? 0) >= 0
 
   return (
     <div className="card p-5 flex flex-col gap-3">
@@ -29,17 +29,19 @@ export default function KPICard({
           className={`w-10 h-10 rounded-xl flex items-center justify-center flex-shrink-0 ${iconBg}`}>
           {icon}
         </div>
-        <span
-          className={`flex items-center gap-0.5 text-xs font-semibold px-2 py-1 rounded-full
+        {change !== undefined && (
+          <span
+            className={`flex items-center gap-0.5 text-xs font-semibold px-2 py-1 rounded-full
             ${
               isPositive
                 ? 'bg-emerald-50 dark:bg-emerald-500/10 text-emerald-600 dark:text-emerald-400'
                 : 'bg-red-50 dark:bg-red-500/10 text-red-600 dark:text-red-400'
             }`}>
-          {isPositive ? <TrendingUp size={11} /> : <TrendingDown size={11} />}
-          {isPositive ? '+' : ''}
-          {change}%
-        </span>
+            {isPositive ? <TrendingUp size={11} /> : <TrendingDown size={11} />}
+            {isPositive ? '+' : ''}
+            {change}%
+          </span>
+        )}
       </div>
 
       <div>

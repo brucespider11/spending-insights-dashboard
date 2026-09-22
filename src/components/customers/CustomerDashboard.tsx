@@ -178,7 +178,7 @@ export default function CustomerDashboard({ customer, onBack }: Props) {
         <div className="card p-6 flex flex-col gap-4">
           <div>
             <h3 className="text-base font-semibold text-gray-800 dark:text-gray-200">
-              6-Month Spending Trend
+              12-Month Spending Trend
             </h3>
             <div className="flex items-center gap-2 mt-1">
               <span className="text-xl font-bold text-gray-900 dark:text-white">

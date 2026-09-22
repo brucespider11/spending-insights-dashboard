@@ -21,3 +21,6 @@ dist-ssr
 # Claude Code internals
 .claude
 .claude-flow
+
+# Local documentation — not pushed to remote
+docs/

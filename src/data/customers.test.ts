@@ -5,13 +5,13 @@ describe('lookupCustomer', () => {
   it('finds a customer by CIF', () => {
     const result = lookupCustomer('CIF', '100234567')
     expect(result).not.toBeNull()
-    expect(result?.name).toBe('Madlanga Moody')
+    expect(result?.name).toBe('Madlanga Dlamini')
   })
 
   it('finds a customer by Account Number', () => {
     const result = lookupCustomer('Account Number', '0987654321')
     expect(result).not.toBeNull()
-    expect(result?.name).toBe('Jade Senyas')
+    expect(result?.name).toBe('Thandi Mokoena')
   })
 
   it('finds a customer by ID Number', () => {
@@ -23,7 +23,7 @@ describe('lookupCustomer', () => {
   it('finds a business customer by CIF (Business)', () => {
     const result = lookupCustomer('CIF (Business)', '200891234')
     expect(result).not.toBeNull()
-    expect(result?.name).toBe('Cupcake Motsepe')
+    expect(result?.name).toBe('Sipho Motsepe')
   })
 
   it('returns null for an unknown CIF', () => {
@@ -120,6 +120,19 @@ describe('CUSTOMERS data integrity', () => {
       expect(c.name.trim().length).toBeGreaterThan(0)
       expect(c.initials.trim().length).toBeGreaterThan(0)
       expect(c.insight.trim().length).toBeGreaterThan(0)
+    })
+  })
+
+  it('every customer has exactly 4 keyInsights with valid types', () => {
+    const validTypes = ['risk', 'alert', 'opportunity', 'pattern']
+    CUSTOMERS.forEach((c) => {
+      expect(c.keyInsights).toHaveLength(4)
+      c.keyInsights.forEach((insight) => {
+        expect(validTypes).toContain(insight.type)
+        expect(insight.title.trim().length).toBeGreaterThan(0)
+        expect(insight.body.trim().length).toBeGreaterThan(0)
+        expect(insight.metric.trim().length).toBeGreaterThan(0)
+      })
     })
   })
 })

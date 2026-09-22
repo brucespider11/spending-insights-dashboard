@@ -177,10 +177,10 @@ Use any of the following identifiers to search or click a profile card directly:
 
 | Name | CIF | Account Number | Segment | Risk |
 |---|---|---|---|---|
-| Madlanga Moody | 100234567 | 1234567890 | Young Professional | Medium |
-| Jade Senyas | 100567890 | 0987654321 | Family | Low |
-| Cupcake Motsepe | 100891234 | 1357924680 | Business Owner | High |
-| Xaka Mulu | 100345678 | 2345678901 | Youth | Low |
-| Vikesh Moolah | 100456789 | 3456789012 | Professional | Medium |
-| Koos Kardashian van der Berg | 100678901 | 4567890123 | Lifestyle | High |
-| Koppies Koppendal | 100789012 | 5678901234 | Retired | Low |
+| Madlanga Dlamini | 100234567 | 1234567890 | Young Professional | Medium |
+| Thandi Mokoena | 100567890 | 0987654321 | Family | Low |
+| Sipho Motsepe | 100891234 | 1357924680 | Business Owner | High |
+| Lwazi Dube | 100345678 | 2345678901 | Youth | Low |
+| Vikesh Govender | 100456789 | 3456789012 | Professional | Medium |
+| Kobus van der Berg | 100678901 | 4567890123 | Lifestyle | High |
+| Anna-Marie Botha | 100789012 | 5678901234 | Retired | Low |
