@@ -1,0 +1,200 @@
+import { useState, useMemo } from 'react'
+import { Search, ArrowUpRight, ArrowDownLeft, LayoutGrid } from 'lucide-react'
+import CategoryCard from '@/components/categories/CategoryCard'
+import { CATEGORIES, getPeriodAmount } from '@/data/categories'
+import type { Category } from '@/data/categories'
+import NoCustomerSelected from '@/components/common/NoCustomerSelected'
+import { useCustomer } from '@/context/CustomerContext'
+import PeriodFilter, { type TimePeriod, PERIOD_MONTHS } from '@/components/common/PeriodFilter'
+
+type Filter = 'all' | 'expense' | 'income'
+
+const FILTERS: { key: Filter; label: string }[] = [
+  { key: 'all', label: 'All' },
+  { key: 'expense', label: 'Expenses' },
+  { key: 'income', label: 'Income' },
+]
+
+export default function CategoriesPage() {
+  const { customer } = useCustomer()
+  const [filter, setFilter] = useState<Filter>('all')
+  const [search, setSearch] = useState('')
+  const [timePeriod, setTimePeriod] = useState<TimePeriod>('12M')
+
+  const nMonths = PERIOD_MONTHS[timePeriod]
+
+  const visible = useMemo(() => {
+    let list: Category[] = CATEGORIES
+    if (filter !== 'all') list = list.filter((c) => c.type === filter)
+    if (search.trim())
+      list = list.filter((c) => c.name.toLowerCase().includes(search.toLowerCase()))
+    return list
+  }, [filter, search])
+
+  if (!customer) return <NoCustomerSelected />
+
+  const expenseCount = CATEGORIES.filter((c) => c.type === 'expense').length
+  const incomeCount = CATEGORIES.filter((c) => c.type === 'income').length
+
+  const periodTotalExpenses = CATEGORIES.filter((c) => c.type === 'expense').reduce(
+    (s, c) => s + getPeriodAmount(c, nMonths),
+    0
+  )
+
+  const periodTotalIncome = CATEGORIES.filter((c) => c.type === 'income').reduce(
+    (s, c) => s + getPeriodAmount(c, nMonths),
+    0
+  )
+
+  const totalForType = (cat: Category) =>
+    cat.type === 'expense' ? periodTotalExpenses : periodTotalIncome
+
+  return (
+    <div className="space-y-6 max-w-[1400px]">
+      {/* Breadcrumb */}
+      <nav className="flex items-center gap-1.5 text-xs text-gray-400 dark:text-gray-600">
+        <span className="hover:text-gray-600 dark:hover:text-gray-400 cursor-pointer transition-colors">
+          Dashboards
+        </span>
+        <span>/</span>
+        <span className="text-gray-700 dark:text-gray-300 font-medium">Categories</span>
+      </nav>
+
+      {/* Page header */}
+      <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-4">
+        <div>
+          <h1 className="text-xl sm:text-2xl font-bold text-gray-900 dark:text-white">
+            Categories
+          </h1>
+          <p className="text-sm text-gray-500 dark:text-gray-500 mt-1">
+            All spending and income categories tracked across your accounts.
+          </p>
+        </div>
+        <PeriodFilter value={timePeriod} onChange={setTimePeriod} />
+      </div>
+
+      {/* Summary strip */}
+      <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+        <div className="card p-4 flex items-center gap-4">
+          <div className="w-9 h-9 rounded-xl bg-gray-100 dark:bg-white/10 flex items-center justify-center flex-shrink-0">
+            <LayoutGrid size={16} className="text-gray-500 dark:text-gray-400" />
+          </div>
+          <div>
+            <p className="text-xs text-gray-500 dark:text-gray-500">Total categories</p>
+            <p className="text-lg font-bold text-gray-900 dark:text-white">
+              {CATEGORIES.length}
+              <span className="text-xs font-normal text-gray-400 dark:text-gray-600 ml-1.5">
+                ({expenseCount} expense · {incomeCount} income)
+              </span>
+            </p>
+          </div>
+        </div>
+
+        <div className="card p-4 flex items-center gap-4">
+          <div className="w-9 h-9 rounded-xl bg-rose-100 dark:bg-rose-500/15 flex items-center justify-center flex-shrink-0">
+            <ArrowUpRight size={16} className="text-rose-600 dark:text-rose-400" />
+          </div>
+          <div>
+            <p className="text-xs text-gray-500 dark:text-gray-500">Total expenses</p>
+            <p className="text-lg font-bold text-gray-900 dark:text-white">
+              R {periodTotalExpenses.toLocaleString()}
+            </p>
+          </div>
+        </div>
+
+        <div className="card p-4 flex items-center gap-4">
+          <div className="w-9 h-9 rounded-xl bg-emerald-100 dark:bg-emerald-500/15 flex items-center justify-center flex-shrink-0">
+            <ArrowDownLeft size={16} className="text-emerald-600 dark:text-emerald-400" />
+          </div>
+          <div>
+            <p className="text-xs text-gray-500 dark:text-gray-500">Total income</p>
+            <p className="text-lg font-bold text-gray-900 dark:text-white">
+              R {periodTotalIncome.toLocaleString()}
+            </p>
+          </div>
+        </div>
+      </div>
+
+      {/* Filter + search bar */}
+      <div className="flex flex-col sm:flex-row gap-3 items-start sm:items-center">
+        {/* Filter tabs */}
+        <div className="flex items-center gap-1 p-1 rounded-xl bg-gray-100 dark:bg-white/5 flex-shrink-0">
+          {FILTERS.map((f) => {
+            const count =
+              f.key === 'all'
+                ? CATEGORIES.length
+                : CATEGORIES.filter((c) => c.type === f.key).length
+            return (
+              <button
+                key={f.key}
+                onClick={() => setFilter(f.key)}
+                className={`px-3 py-1.5 rounded-lg text-xs font-medium transition-colors flex items-center gap-1.5
+                  ${
+                    filter === f.key
+                      ? 'bg-white dark:bg-[#1C1B2E] text-gray-900 dark:text-white shadow-sm'
+                      : 'text-gray-500 dark:text-gray-500 hover:text-gray-700 dark:hover:text-gray-300'
+                  }`}>
+                {f.label}
+                <span
+                  className={`text-[10px] px-1.5 py-0.5 rounded-full font-semibold
+                  ${
+                    filter === f.key
+                      ? 'bg-brand-100 dark:bg-brand-500/20 text-brand-600 dark:text-brand-400'
+                      : 'bg-gray-200 dark:bg-white/10 text-gray-500 dark:text-gray-500'
+                  }`}>
+                  {count}
+                </span>
+              </button>
+            )
+          })}
+        </div>
+
+        {/* Search */}
+        <div className="relative flex-1 w-full sm:max-w-xs">
+          <Search size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" />
+          <input
+            type="text"
+            placeholder="Search categories..."
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+            className="w-full pl-8 pr-4 py-2 text-sm rounded-xl
+                       bg-white dark:bg-[#1C1B2E]
+                       border border-gray-200 dark:border-[#2D2C44]
+                       text-gray-700 dark:text-gray-300
+                       placeholder:text-gray-400 dark:placeholder:text-gray-600
+                       focus:outline-none focus:ring-2 focus:ring-brand-500/30 focus:border-brand-400
+                       transition-colors"
+          />
+        </div>
+
+        {visible.length !== CATEGORIES.length && (
+          <p className="text-xs text-gray-400 dark:text-gray-600 flex-shrink-0">
+            Showing {visible.length} of {CATEGORIES.length}
+          </p>
+        )}
+      </div>
+
+      {/* Category grid */}
+      {visible.length > 0 ? (
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
+          {visible.map((cat) => (
+            <CategoryCard
+              key={cat.id}
+              category={cat}
+              totalForType={totalForType(cat)}
+              displayAmount={getPeriodAmount(cat, nMonths)}
+            />
+          ))}
+        </div>
+      ) : (
+        <div className="card py-16 flex flex-col items-center gap-3 text-center">
+          <Search size={32} className="text-gray-300 dark:text-gray-700" />
+          <p className="text-sm font-medium text-gray-500 dark:text-gray-500">
+            No categories found
+          </p>
+          <p className="text-xs text-gray-400 dark:text-gray-600">Try a different search term</p>
+        </div>
+      )}
+    </div>
+  )
+}
