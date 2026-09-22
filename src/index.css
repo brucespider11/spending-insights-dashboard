@@ -1,0 +1,74 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --sidebar-width: 240px;
+    --sidebar-collapsed-width: 64px;
+    --header-height: 60px;
+  }
+
+  html {
+    font-family: 'Inter', system-ui, sans-serif;
+  }
+
+  body {
+    @apply bg-slate-100 dark:bg-[#0F0E1A] text-gray-900 dark:text-gray-100;
+  }
+
+  /* Thin scrollbar */
+  ::-webkit-scrollbar {
+    width: 4px;
+    height: 4px;
+  }
+  ::-webkit-scrollbar-track {
+    @apply bg-transparent;
+  }
+  ::-webkit-scrollbar-thumb {
+    @apply bg-gray-300 dark:bg-gray-700 rounded-full;
+  }
+}
+
+@layer components {
+  .card {
+    @apply bg-white dark:bg-[#1C1B2E] rounded-2xl border border-gray-100 dark:border-[#2D2C44];
+  }
+
+  .sidebar-link {
+    @apply flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium
+           text-gray-600 dark:text-gray-400
+           hover:bg-gray-100 dark:hover:bg-white/5
+           transition-colors duration-150 cursor-pointer;
+  }
+
+  .sidebar-link.active {
+    @apply bg-brand-100 dark:bg-brand-600/20 text-brand-600 dark:text-brand-400;
+  }
+
+  .sidebar-sub-link {
+    @apply flex items-center gap-3 pl-10 pr-3 py-2 rounded-xl text-sm
+           text-gray-500 dark:text-gray-500
+           hover:bg-gray-100 dark:hover:bg-white/5
+           transition-colors duration-150 cursor-pointer;
+  }
+
+  .sidebar-sub-link.active {
+    @apply text-brand-600 dark:text-brand-400 font-medium;
+  }
+
+  .btn-ghost {
+    @apply flex items-center gap-2 px-3 py-2 rounded-xl text-sm font-medium
+           text-gray-600 dark:text-gray-400
+           border border-gray-200 dark:border-[#2D2C44]
+           bg-white dark:bg-[#1C1B2E]
+           hover:bg-gray-50 dark:hover:bg-white/5
+           transition-colors duration-150;
+  }
+
+  .btn-primary {
+    @apply flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-medium
+           text-white bg-brand-600 hover:bg-brand-700
+           transition-colors duration-150;
+  }
+}

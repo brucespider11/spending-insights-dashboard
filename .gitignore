@@ -1,0 +1,23 @@
+# Dependencies
+node_modules
+
+# Build output
+dist
+dist-ssr
+
+# Local env
+*.local
+.env
+.env.*
+
+# Editor / OS
+.DS_Store
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
+
+# Claude Code internals
+.claude
+.claude-flow
