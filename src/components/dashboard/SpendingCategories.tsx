@@ -66,7 +66,9 @@ export default function SpendingCategories({ categories }: Props) {
           <span className="text-sm font-bold text-gray-900 dark:text-white leading-tight text-center px-2">
             {hovered ? hovered.name : topCategory?.name}
           </span>
-          <span className="text-xs font-semibold" style={{ color: hovered ? hovered.color : topCategory?.color }}>
+          <span
+            className="text-xs font-semibold"
+            style={{ color: hovered ? hovered.color : topCategory?.color }}>
             {hovered ? hovered.value : topCategory?.value}%
           </span>
         </div>

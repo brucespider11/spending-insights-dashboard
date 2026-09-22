@@ -286,7 +286,8 @@ export default function CustomerDashboard({ customer, onBack }: Props) {
             </div>
 
             {/* Hover detail strip */}
-            <div className={`w-full transition-opacity duration-150 ${hovered ? 'opacity-100' : 'opacity-0'}`}>
+            <div
+              className={`w-full transition-opacity duration-150 ${hovered ? 'opacity-100' : 'opacity-0'}`}>
               <div className="flex items-center justify-between px-3 py-2 rounded-xl bg-gray-50 dark:bg-white/5 border border-gray-100 dark:border-white/5">
                 <div className="flex items-center gap-2">
                   <span
