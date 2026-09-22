@@ -1,8 +1,9 @@
-import { DollarSign, CreditCard, TrendingUp, Hash, Lightbulb } from 'lucide-react'
+import { DollarSign, CreditCard, TrendingUp, Hash } from 'lucide-react'
 import KPICard from '@/components/dashboard/KPICard'
 import SpendingChart from '@/components/dashboard/SpendingChart'
 import SpendingCategories from '@/components/dashboard/SpendingCategories'
 import TopMerchantsWidget from '@/components/dashboard/TopMerchantsWidget'
+import InsightsPanel from '@/components/dashboard/InsightsPanel'
 import NoCustomerSelected from '@/components/common/NoCustomerSelected'
 import { useCustomer } from '@/context/CustomerContext'
 
@@ -118,24 +119,13 @@ export default function DashboardPage() {
         ))}
       </div>
 
+      {/* Key insights */}
+      <InsightsPanel insights={customer.keyInsights} />
+
       {/* Charts row */}
       <div className="grid grid-cols-1 xl:grid-cols-[1fr_320px] gap-4">
         <SpendingChart customer={customer} />
         <SpendingCategories categories={customer.categories} />
-      </div>
-
-      {/* Analyst insight */}
-      <div className={`flex items-start gap-3 p-4 rounded-2xl border ${risk.bg} ${risk.border}`}>
-        <div
-          className={`w-8 h-8 rounded-xl flex items-center justify-center flex-shrink-0 ${risk.text}`}>
-          <Lightbulb size={16} />
-        </div>
-        <div>
-          <p className={`text-xs font-semibold mb-0.5 ${risk.text}`}>Analyst insight</p>
-          <p className="text-sm text-gray-700 dark:text-gray-300 leading-relaxed">
-            {customer.insight}
-          </p>
-        </div>
       </div>
 
       {/* Top merchants */}

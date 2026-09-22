@@ -2,6 +2,7 @@ import { BrowserRouter, Routes, Route } from 'react-router-dom'
 import { ThemeProvider } from './context/ThemeContext'
 import { SidebarProvider } from './context/SidebarContext'
 import { CustomerProvider } from './context/CustomerContext'
+import { ErrorBoundary } from './components/common/ErrorBoundary'
 import MainLayout from './components/layout/MainLayout'
 import DashboardPage from './pages/DashboardPage'
 import TransactionsPage from './pages/TransactionsPage'
@@ -17,17 +18,19 @@ export default function App() {
       <ThemeProvider>
         <CustomerProvider>
           <SidebarProvider>
-            <MainLayout>
-              <Routes>
-                <Route path="/" element={<DashboardPage />} />
-                <Route path="/transactions" element={<TransactionsPage />} />
-                <Route path="/categories" element={<CategoriesPage />} />
-                <Route path="/spending-trends" element={<SpendingTrendsPage />} />
-                <Route path="/customers" element={<CustomerOverviewPage />} />
-                <Route path="/merchants" element={<MerchantInsightsPage />} />
-                <Route path="/settings" element={<SettingsPage />} />
-              </Routes>
-            </MainLayout>
+            <ErrorBoundary>
+              <MainLayout>
+                <Routes>
+                  <Route path="/" element={<DashboardPage />} />
+                  <Route path="/transactions" element={<TransactionsPage />} />
+                  <Route path="/categories" element={<CategoriesPage />} />
+                  <Route path="/spending-trends" element={<SpendingTrendsPage />} />
+                  <Route path="/customers" element={<CustomerOverviewPage />} />
+                  <Route path="/merchants" element={<MerchantInsightsPage />} />
+                  <Route path="/settings" element={<SettingsPage />} />
+                </Routes>
+              </MainLayout>
+            </ErrorBoundary>
           </SidebarProvider>
         </CustomerProvider>
       </ThemeProvider>

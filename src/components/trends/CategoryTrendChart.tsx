@@ -9,41 +9,75 @@ import {
   ResponsiveContainer,
   type TooltipProps,
 } from 'recharts'
-import { CATEGORY_MONTHLY, CATEGORY_SERIES } from '@/data/trends'
+import type { CustomerProfile } from '@/data/customers'
 
 const fmt = (v: number) => `R ${(v / 1000).toFixed(0)}k`
+
+interface Series {
+  key: string
+  label: string
+  color: string
+}
 
 function CustomTooltip({
   active,
   payload,
   label,
   hidden,
-}: TooltipProps<number, string> & { hidden: Set<string> }) {
+  series,
+}: TooltipProps<number, string> & { hidden: Set<string>; series: Series[] }) {
   if (!active || !payload?.length) return null
   return (
     <div className="bg-white dark:bg-[#1C1B2E] border border-gray-100 dark:border-[#2D2C44] rounded-xl shadow-lg px-4 py-3 text-sm min-w-[170px]">
       <p className="font-semibold text-gray-700 dark:text-gray-300 mb-2">{label}</p>
-      {CATEGORY_SERIES.filter((s) => !hidden.has(s.key)).map((s) => {
-        const entry = payload.find((p) => p.dataKey === s.key)
-        if (!entry) return null
-        return (
-          <div key={s.key} className="flex items-center justify-between gap-4 py-0.5">
-            <div className="flex items-center gap-1.5">
-              <span className="w-2 h-2 rounded-full" style={{ background: s.color }} />
-              <span className="text-xs text-gray-500 dark:text-gray-400">{s.label}</span>
+      {series
+        .filter((s) => !hidden.has(s.key))
+        .map((s) => {
+          const entry = payload.find((p) => p.dataKey === s.key)
+          if (!entry) return null
+          return (
+            <div key={s.key} className="flex items-center justify-between gap-4 py-0.5">
+              <div className="flex items-center gap-1.5">
+                <span className="w-2 h-2 rounded-full" style={{ background: s.color }} />
+                <span className="text-xs text-gray-500 dark:text-gray-400">{s.label}</span>
+              </div>
+              <span className="text-xs font-semibold text-gray-800 dark:text-gray-200">
+                R {(entry.value as number).toLocaleString()}
+              </span>
             </div>
-            <span className="text-xs font-semibold text-gray-800 dark:text-gray-200">
-              R {(entry.value as number).toLocaleString()}
-            </span>
-          </div>
-        )
-      })}
+          )
+        })}
     </div>
   )
 }
 
-export default function CategoryTrendChart() {
+interface Props {
+  customer: CustomerProfile
+}
+
+export default function CategoryTrendChart({ customer }: Props) {
   const [hidden, setHidden] = useState<Set<string>>(new Set())
+
+  // Top 5 categories by spend, excluding the catch-all 'Other'
+  const topCategories = customer.categories.filter((c) => c.name !== 'Other').slice(0, 5)
+
+  const series: Series[] = topCategories.map((cat) => ({
+    key: cat.name.toLowerCase(),
+    label: cat.name,
+    color: cat.color,
+  }))
+
+  // Distribute each category's annual total across months using the customer's
+  // own monthly spend pattern as the seasonal weight
+  const totalSpend = customer.monthlyTrend.reduce((s, m) => s + m.amount, 0)
+  const categoryMonthly = customer.monthlyTrend.map((m) => {
+    const weight = totalSpend > 0 ? m.amount / totalSpend : 1 / 12
+    const row: Record<string, number | string> = { month: m.month }
+    topCategories.forEach((cat) => {
+      row[cat.name.toLowerCase()] = Math.round(cat.amount * weight)
+    })
+    return row
+  })
 
   const toggle = (key: string) =>
     setHidden((prev) => {
@@ -66,7 +100,7 @@ export default function CategoryTrendChart() {
 
       {/* Clickable legend */}
       <div className="flex items-center flex-wrap gap-2">
-        {CATEGORY_SERIES.map((s) => {
+        {series.map((s) => {
           const isHidden = hidden.has(s.key)
           return (
             <button
@@ -90,7 +124,7 @@ export default function CategoryTrendChart() {
 
       <div className="h-64">
         <ResponsiveContainer width="100%" height="100%">
-          <LineChart data={CATEGORY_MONTHLY} margin={{ top: 4, right: 4, bottom: 0, left: -10 }}>
+          <LineChart data={categoryMonthly} margin={{ top: 4, right: 4, bottom: 0, left: -10 }}>
             <CartesianGrid
               strokeDasharray="3 3"
               stroke="currentColor"
@@ -110,10 +144,10 @@ export default function CategoryTrendChart() {
               axisLine={false}
             />
             <Tooltip
-              content={<CustomTooltip hidden={hidden} />}
+              content={<CustomTooltip hidden={hidden} series={series} />}
               cursor={{ stroke: 'currentColor', strokeOpacity: 0.1 }}
             />
-            {CATEGORY_SERIES.map((s) =>
+            {series.map((s) =>
               hidden.has(s.key) ? null : (
                 <Line
                   key={s.key}

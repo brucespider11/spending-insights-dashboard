@@ -66,7 +66,7 @@ const m = (
 })
 
 export const MERCHANT_DATA: Record<string, CustomerMerchantData> = {
-  // ── Madlanga Moody — dining & entertainment heavy ───────────────────
+  // ── Madlanga Dlamini — dining & entertainment heavy ─────────────────
   '100234567': {
     otherSpend: 157300,
     merchants: [
@@ -85,7 +85,7 @@ export const MERCHANT_DATA: Record<string, CustomerMerchantData> = {
     ],
   },
 
-  // ── Jade Senyas — groceries & education heavy ───────────────────────
+  // ── Thandi Mokoena — groceries & education heavy ────────────────────
   '100567890': {
     otherSpend: 182200,
     merchants: [
@@ -104,7 +104,7 @@ export const MERCHANT_DATA: Record<string, CustomerMerchantData> = {
     ],
   },
 
-  // ── Cupcake Motsepe — travel & luxury heavy ──────────────────────────
+  // ── Sipho Motsepe — travel & luxury heavy ────────────────────────────
   '100891234': {
     otherSpend: 232000,
     merchants: [
@@ -123,7 +123,7 @@ export const MERCHANT_DATA: Record<string, CustomerMerchantData> = {
     ],
   },
 
-  // ── Xaka Mulu — transport & delivery heavy (youth) ───────────────────
+  // ── Lwazi Dube — transport & delivery heavy (youth) ─────────────────
   '100345678': {
     otherSpend: 30800,
     merchants: [
@@ -142,7 +142,7 @@ export const MERCHANT_DATA: Record<string, CustomerMerchantData> = {
     ],
   },
 
-  // ── Vikesh Moolah — groceries & professional (KZN) ──────────────────
+  // ── Vikesh Govender — groceries & professional (KZN) ───────────────
   '100456789': {
     otherSpend: 149800,
     merchants: [
@@ -161,7 +161,7 @@ export const MERCHANT_DATA: Record<string, CustomerMerchantData> = {
     ],
   },
 
-  // ── Koos Kardashian van der Berg — lifestyle & luxury (WC) ──────────
+  // ── Kobus van der Berg — lifestyle & luxury (WC) ────────────────────
   '100678901': {
     otherSpend: 239400,
     merchants: [
@@ -180,7 +180,7 @@ export const MERCHANT_DATA: Record<string, CustomerMerchantData> = {
     ],
   },
 
-  // ── Koppies Koppendal — essentials & retiree (FS) ────────────────────
+  // ── Anna-Marie Botha — essentials & retiree (FS) ────────────────────
   '100789012': {
     otherSpend: 55200,
     merchants: [

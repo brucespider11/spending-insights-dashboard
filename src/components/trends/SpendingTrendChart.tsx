@@ -9,8 +9,8 @@ import {
   ResponsiveContainer,
   type TooltipProps,
 } from 'recharts'
-import { MONTHLY_TREND, QUARTERLY_TREND } from '@/data/trends'
 import PeriodFilter, { type TimePeriod, PERIOD_MONTHS } from '@/components/common/PeriodFilter'
+import type { CustomerProfile } from '@/data/customers'
 
 type Period = 'monthly' | 'quarterly'
 
@@ -68,12 +68,36 @@ function CustomTooltip({
   )
 }
 
-export default function SpendingTrendChart() {
+interface Props {
+  customer: CustomerProfile
+}
+
+export default function SpendingTrendChart({ customer }: Props) {
   const [period, setPeriod] = useState<Period>('monthly')
   const [timePeriod, setTimePeriod] = useState<TimePeriod>('12M')
   const [showLastYear, setShowLastYear] = useState(false)
 
-  const rawData = period === 'monthly' ? MONTHLY_TREND : QUARTERLY_TREND
+  // Derive last year by scaling down each month by the customer's YoY growth rate
+  const monthlyData = customer.monthlyTrend.map((m) => ({
+    month: m.month,
+    thisYear: m.amount,
+    lastYear: Math.round(m.amount / (1 + customer.spendChange / 100)),
+  }))
+
+  // Aggregate monthly into Q1–Q4
+  const quarterlyData = [
+    { period: 'Q1', thisYear: 0, lastYear: 0 },
+    { period: 'Q2', thisYear: 0, lastYear: 0 },
+    { period: 'Q3', thisYear: 0, lastYear: 0 },
+    { period: 'Q4', thisYear: 0, lastYear: 0 },
+  ]
+  monthlyData.forEach((m, i) => {
+    const q = Math.floor(i / 3)
+    quarterlyData[q].thisYear += m.thisYear
+    quarterlyData[q].lastYear += m.lastYear
+  })
+
+  const rawData = period === 'monthly' ? monthlyData : quarterlyData
   const data = period === 'monthly' ? rawData.slice(-PERIOD_MONTHS[timePeriod]) : rawData
   const xKey = period === 'monthly' ? 'month' : 'period'
   const gradId = 'trendGradThis'
@@ -133,12 +157,12 @@ export default function SpendingTrendChart() {
       <div className="flex items-center gap-5">
         <div className="flex items-center gap-1.5">
           <span className="w-3 h-3 rounded-sm bg-brand-600" />
-          <span className="text-xs text-gray-500 dark:text-gray-400">2025</span>
+          <span className="text-xs text-gray-500 dark:text-gray-400">This year</span>
         </div>
         {showLastYear && (
           <div className="flex items-center gap-1.5">
             <span className="w-3 h-3 rounded-sm bg-gray-400" />
-            <span className="text-xs text-gray-500 dark:text-gray-400">2024</span>
+            <span className="text-xs text-gray-500 dark:text-gray-400">Last year</span>
           </div>
         )}
       </div>

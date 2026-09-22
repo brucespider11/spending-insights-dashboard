@@ -1,5 +1,20 @@
-import { Check } from 'lucide-react'
+import { useState } from 'react'
+import { Check, Zap } from 'lucide-react'
 import { useTheme, type ColorMode } from '@/context/ThemeContext'
+
+function CrashTest() {
+  const [crash, setCrash] = useState(false)
+  // Throwing during render (not in the handler) is what ErrorBoundary catches
+  if (crash) throw new Error('CrashTest: intentional render error — ErrorBoundary is working.')
+  return (
+    <button
+      onClick={() => setCrash(true)}
+      className="flex items-center gap-2 px-4 py-2 rounded-xl border border-rose-300 dark:border-rose-500/40 text-rose-600 dark:text-rose-400 text-sm font-medium hover:bg-rose-50 dark:hover:bg-rose-500/10 transition-colors">
+      <Zap size={14} />
+      Trigger crash
+    </button>
+  )
+}
 
 const MODES: {
   key: ColorMode
@@ -101,6 +116,20 @@ export default function SettingsPage() {
             )
           })}
         </div>
+      </div>
+
+      {/* Developer tools */}
+      <div className="card p-6 space-y-4">
+        <div>
+          <h2 className="text-base font-semibold text-gray-800 dark:text-gray-200">
+            Developer tools
+          </h2>
+          <p className="text-sm text-gray-400 dark:text-gray-600 mt-0.5">
+            Test the error boundary — click the button below to trigger a deliberate crash and
+            verify the recovery UI appears.
+          </p>
+        </div>
+        <CrashTest />
       </div>
     </div>
   )

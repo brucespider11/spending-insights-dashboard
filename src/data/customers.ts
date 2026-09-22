@@ -1,5 +1,12 @@
 export type IdentifierType = 'CIF' | 'Account Number' | 'ID Number' | 'CIF (Business)'
 
+export interface CustomerInsight {
+  type: 'risk' | 'alert' | 'opportunity' | 'pattern'
+  title: string
+  body: string
+  metric: string
+}
+
 export interface CustomerCategory {
   name: string
   amount: number
@@ -28,6 +35,7 @@ export interface CustomerProfile {
   categories: CustomerCategory[]
   monthlyTrend: { month: string; amount: number }[]
   insight: string
+  keyInsights: CustomerInsight[]
 }
 
 export const CUSTOMERS: CustomerProfile[] = [
@@ -35,8 +43,8 @@ export const CUSTOMERS: CustomerProfile[] = [
     cif: '100234567',
     accountNumber: '1234567890',
     idNumber: '9801015432089',
-    name: 'Madlanga Moody',
-    initials: 'MM',
+    name: 'Madlanga Dlamini',
+    initials: 'MD',
     segment: 'Young Professional',
     segmentColor: '#7c3aed',
     riskProfile: 'Medium',
@@ -71,14 +79,40 @@ export const CUSTOMERS: CustomerProfile[] = [
       { month: 'Dec', amount: 31200 },
     ],
     insight:
-      'High discretionary spender. Dining and entertainment account for 50% of total spend — well above the 30% segment average.',
+      'High discretionary spender. Dining and entertainment account for 50% of total spend — well above the 30% segment average. YoY growth of 18.2% requires close monitoring.',
+    keyInsights: [
+      {
+        type: 'risk',
+        title: 'Elevated spend-to-income ratio',
+        body: 'Monthly spend of R 26,033 is 74% of take-home income — above the 65% threshold for this segment.',
+        metric: '74% ratio',
+      },
+      {
+        type: 'pattern',
+        title: 'Dining & entertainment dominance',
+        body: 'These two categories account for 50% of total spend, compared to a 30% segment average. Discretionary spend is the primary driver.',
+        metric: '50% of spend',
+      },
+      {
+        type: 'opportunity',
+        title: 'Savings capacity available',
+        body: 'Trimming dining to segment average would free up approximately R 4,200/month — ideal for a tax-free savings account.',
+        metric: 'R 4,200/mo',
+      },
+      {
+        type: 'alert',
+        title: 'Spend growth outpacing income',
+        body: 'Year-on-year spend growth of 18.2% significantly exceeds the 6–8% typical salary increase band. Trajectory requires monitoring.',
+        metric: '+18.2% YoY',
+      },
+    ],
   },
   {
     cif: '100567890',
     accountNumber: '0987654321',
     idNumber: '7502245678234',
-    name: 'Jade Senyas',
-    initials: 'JS',
+    name: 'Thandi Mokoena',
+    initials: 'TM',
     segment: 'Family',
     segmentColor: '#10b981',
     riskProfile: 'Low',
@@ -113,15 +147,41 @@ export const CUSTOMERS: CustomerProfile[] = [
       { month: 'Dec', amount: 43800 },
     ],
     insight:
-      'Conservative family spender. Essential categories (groceries, education, utilities) make up 70% of spend — consistent with a stable household profile.',
+      'Conservative family spender. Essential categories make up 70% of spend. Strong 39% savings rate — well-positioned for wealth-building products.',
+    keyInsights: [
+      {
+        type: 'pattern',
+        title: 'Essential-first spending profile',
+        body: 'Groceries, education, and utilities account for 70% of spend — consistent with a well-managed family household.',
+        metric: '70% essentials',
+      },
+      {
+        type: 'opportunity',
+        title: 'Strong investment candidacy',
+        body: 'With a 39% savings rate and stable spend pattern, this customer is well-positioned for unit trusts or a fixed deposit.',
+        metric: '39% savings rate',
+      },
+      {
+        type: 'alert',
+        title: 'Education costs rising',
+        body: 'Education spend has grown 15.6% YoY, likely tracking school fee escalations. May need a dedicated education savings plan.',
+        metric: '+15.6% education',
+      },
+      {
+        type: 'pattern',
+        title: 'Low transaction velocity',
+        body: '1,204 transactions annually suggests consolidated, planned shopping behaviour — lower fraud exposure than the segment average.',
+        metric: '1,204 txns/yr',
+      },
+    ],
   },
   {
     cif: '100891234',
     accountNumber: '1357924680',
     idNumber: '6804128901234',
     cifBusiness: '200891234',
-    name: 'Cupcake Motsepe',
-    initials: 'CM',
+    name: 'Sipho Motsepe',
+    initials: 'SM',
     segment: 'Business Owner',
     segmentColor: '#f59e0b',
     riskProfile: 'High',
@@ -156,7 +216,33 @@ export const CUSTOMERS: CustomerProfile[] = [
       { month: 'Dec', amount: 91200 },
     ],
     insight:
-      'Premium lifestyle spender. Travel and shopping account for 55% of spend. Income is variable — business payouts create irregular deposit patterns.',
+      'Premium lifestyle spender with blended business and personal transactions. Irregular deposit patterns and high transaction velocity warrant segment review.',
+    keyInsights: [
+      {
+        type: 'risk',
+        title: 'Business and personal spend blended',
+        body: 'With 2,187 transactions and a linked Business CIF, personal and business expenses appear intermixed — a tax and audit risk.',
+        metric: '2,187 txns',
+      },
+      {
+        type: 'alert',
+        title: 'Lifestyle inflation accelerating',
+        body: 'Spend has grown 22.8% YoY against a relatively stable income base. Travel and shopping are the primary growth drivers.',
+        metric: '+22.8% YoY',
+      },
+      {
+        type: 'opportunity',
+        title: 'Business banking referral',
+        body: 'Separating business expenses via the linked Business CIF (200891234) could unlock VAT benefits and cleaner financial reporting.',
+        metric: 'CIF 200891234',
+      },
+      {
+        type: 'pattern',
+        title: 'Irregular deposit pattern',
+        body: 'Income deposits vary significantly month-to-month, consistent with business owner drawdowns rather than a fixed salary.',
+        metric: 'Variable income',
+      },
+    ],
   },
 
   // ── New customers ──────────────────────────────────────────────────────
@@ -165,8 +251,8 @@ export const CUSTOMERS: CustomerProfile[] = [
     cif: '100345678',
     accountNumber: '2345678901',
     idNumber: '9805156234087',
-    name: 'Xaka Mulu',
-    initials: 'XM',
+    name: 'Lwazi Dube',
+    initials: 'LD',
     segment: 'Youth',
     segmentColor: '#06b6d4',
     riskProfile: 'Low',
@@ -201,14 +287,40 @@ export const CUSTOMERS: CustomerProfile[] = [
       { month: 'Dec', amount: 20200 },
     ],
     insight:
-      'Digital-native spender. Ride-hailing and food delivery apps account for 51% of transport and dining spend — typical youth urbanite pattern with strong growth trajectory.',
+      'Digital-native youth spender. App-based transport and dining dominate. No healthcare spend detected — key insurance gap for this age group.',
+    keyInsights: [
+      {
+        type: 'pattern',
+        title: 'Digital-first spending behaviour',
+        body: 'Ride-hailing and food delivery apps account for the majority of transport and dining spend — typical of an urban digital native.',
+        metric: '51% app-based',
+      },
+      {
+        type: 'alert',
+        title: 'No healthcare spend detected',
+        body: 'Zero spend in healthcare or medical aid categories for a customer in their mid-twenties indicates an uninsured gap.',
+        metric: 'R 0 healthcare',
+      },
+      {
+        type: 'opportunity',
+        title: 'Ideal savings entry point',
+        body: 'Spend growth is tracking income growth. A starter investment or savings pocket now could compound meaningfully over a 10-year horizon.',
+        metric: '+24.6% growth',
+      },
+      {
+        type: 'alert',
+        title: 'Holiday overspend pattern',
+        body: 'December spend was 62% above monthly average, suggesting seasonal budget pressure. A Christmas savings plan could smooth this.',
+        metric: '+62% Dec spike',
+      },
+    ],
   },
   {
     cif: '100456789',
     accountNumber: '3456789012',
     idNumber: '8507235678123',
-    name: 'Vikesh Moolah',
-    initials: 'VM',
+    name: 'Vikesh Govender',
+    initials: 'VG',
     segment: 'Professional',
     segmentColor: '#3b82f6',
     riskProfile: 'Medium',
@@ -243,14 +355,40 @@ export const CUSTOMERS: CustomerProfile[] = [
       { month: 'Dec', amount: 35800 },
     ],
     insight:
-      'Balanced professional spender. Dining and groceries dominate at 47% combined — healthy household fundamentals with moderate discretionary growth in travel.',
+      'Balanced professional spender with strong savings capacity. Elevated healthcare spend and growing travel category are the key watchpoints.',
+    keyInsights: [
+      {
+        type: 'pattern',
+        title: 'Well-balanced spend profile',
+        body: 'Dining and groceries combined represent 47% of spend — within healthy norms for the Professional segment.',
+        metric: '47% food spend',
+      },
+      {
+        type: 'opportunity',
+        title: 'Finance product readiness',
+        body: 'A 36% effective savings rate and stable spend growth make this customer a strong candidate for home loan or vehicle finance.',
+        metric: '36% savings rate',
+      },
+      {
+        type: 'alert',
+        title: 'Healthcare spend elevated',
+        body: 'R 43,780 in healthcare YTD (11% of total spend) may indicate chronic condition management or dependant medical costs.',
+        metric: 'R 43,780 health',
+      },
+      {
+        type: 'pattern',
+        title: 'Emerging travel category',
+        body: 'Travel spend has grown 14% YoY and now represents 14% of total spend — an aspirational lifestyle shift worth tracking.',
+        metric: '+14% travel YoY',
+      },
+    ],
   },
   {
     cif: '100678901',
     accountNumber: '4567890123',
     idNumber: '7812015987654',
-    name: 'Koos Kardashian van der Berg',
-    initials: 'KK',
+    name: 'Kobus van der Berg',
+    initials: 'KV',
     segment: 'Lifestyle',
     segmentColor: '#ec4899',
     riskProfile: 'High',
@@ -285,14 +423,40 @@ export const CUSTOMERS: CustomerProfile[] = [
       { month: 'Dec', amount: 86000 },
     ],
     insight:
-      'Lifestyle-driven spender with an accelerating growth curve (+31.4%). Shopping and entertainment combined exceed 45% of total spend. Spend-to-income ratio of 64% warrants review.',
+      'High-risk lifestyle spender with accelerating growth (+31.4% YoY). No savings behaviour detected despite above-average income. Immediate wealth management referral recommended.',
+    keyInsights: [
+      {
+        type: 'risk',
+        title: 'Spend growth trajectory unsustainable',
+        body: 'Year-on-year spend growth of 31.4% far exceeds income growth. At this rate, spend-to-income ratio will breach 80% within 18 months.',
+        metric: '+31.4% YoY',
+      },
+      {
+        type: 'alert',
+        title: 'Shopping dominates discretionary',
+        body: 'Retail shopping at 30% of total spend is the highest in the Lifestyle peer group — luxury and fashion brands are primary drivers.',
+        metric: '30% shopping',
+      },
+      {
+        type: 'risk',
+        title: 'Extreme seasonal volatility',
+        body: 'December spend (R 86,000) is 125% higher than January (R 38,200). This level of seasonality creates cash flow risk.',
+        metric: '125% Dec vs Jan',
+      },
+      {
+        type: 'opportunity',
+        title: 'No savings category detected',
+        body: 'Despite a high income, no investment or savings transactions are visible. A wealth management conversation is warranted.',
+        metric: 'R 0 savings',
+      },
+    ],
   },
   {
     cif: '100789012',
     accountNumber: '5678901234',
     idNumber: '6203105432110',
-    name: 'Koppies Koppendal',
-    initials: 'KK',
+    name: 'Anna-Marie Botha',
+    initials: 'AB',
     segment: 'Retired',
     segmentColor: '#10b981',
     riskProfile: 'Low',
@@ -327,7 +491,33 @@ export const CUSTOMERS: CustomerProfile[] = [
       { month: 'Dec', amount: 17800 },
     ],
     insight:
-      'Highly predictable retiree spend pattern. Essential categories dominate at 86% combined. Excellent account conduct across 16+ years — exemplary low-risk profile.',
+      'Model retiree profile. Essential spend dominates at 86%, spend variance is minimal, and 16+ years of exemplary account conduct make this the lowest-risk customer in the portfolio.',
+    keyInsights: [
+      {
+        type: 'pattern',
+        title: 'Textbook retiree spend profile',
+        body: 'Essential categories — groceries, healthcare, and utilities — account for 86% of spend. Highly predictable and well-managed.',
+        metric: '86% essentials',
+      },
+      {
+        type: 'opportunity',
+        title: 'Highest creditworthiness in cohort',
+        body: 'With 16+ years of consistent account conduct and a 43% effective savings rate, this customer qualifies for premium banking tier.',
+        metric: '16+ yr tenure',
+      },
+      {
+        type: 'alert',
+        title: 'Healthcare costs escalating',
+        body: 'Healthcare spend has grown 8.9% YoY — outpacing CPI. Medical aid adequacy should be reviewed to avoid out-of-pocket risk.',
+        metric: '+8.9% health YoY',
+      },
+      {
+        type: 'pattern',
+        title: 'Minimal discretionary volatility',
+        body: 'Month-to-month spend variance is less than 12% — the lowest in the portfolio. Income is fixed pension/annuity.',
+        metric: '<12% variance',
+      },
+    ],
   },
 ]
 

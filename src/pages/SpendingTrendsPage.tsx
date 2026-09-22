@@ -2,54 +2,50 @@ import { Calendar, TrendingUp, BarChart2, Award } from 'lucide-react'
 import SpendingTrendChart from '@/components/trends/SpendingTrendChart'
 import CategoryTrendChart from '@/components/trends/CategoryTrendChart'
 import TopMovers from '@/components/trends/TopMovers'
-import { MONTHLY_TREND } from '@/data/trends'
 import NoCustomerSelected from '@/components/common/NoCustomerSelected'
 import { useCustomer } from '@/context/CustomerContext'
-
-const totalYTD = MONTHLY_TREND.reduce((s, m) => s + m.thisYear, 0) // 684,900
-const totalLastYr = MONTHLY_TREND.reduce((s, m) => s + m.lastYear, 0) // 616,600
-const monthlyAvg = Math.round(totalYTD / 12) // 57,075
-const peakMonth = MONTHLY_TREND.reduce((a, b) => (a.thisYear > b.thisYear ? a : b))
-const yoyChange = (((totalYTD - totalLastYr) / totalLastYr) * 100).toFixed(1)
-
-const STATS = [
-  {
-    label: 'Total YTD spend',
-    value: `R ${totalYTD.toLocaleString()}`,
-    sub: 'Jan – Dec 2025',
-    icon: <BarChart2 size={17} />,
-    iconBg: 'bg-brand-100 dark:bg-brand-500/15',
-    iconColor: 'text-brand-600 dark:text-brand-400',
-  },
-  {
-    label: 'Monthly average',
-    value: `R ${monthlyAvg.toLocaleString()}`,
-    sub: 'per month',
-    icon: <Calendar size={17} />,
-    iconBg: 'bg-blue-100 dark:bg-blue-500/15',
-    iconColor: 'text-blue-600 dark:text-blue-400',
-  },
-  {
-    label: 'Peak month',
-    value: peakMonth.month,
-    sub: `R ${peakMonth.thisYear.toLocaleString()}`,
-    icon: <Award size={17} />,
-    iconBg: 'bg-amber-100 dark:bg-amber-500/15',
-    iconColor: 'text-amber-600 dark:text-amber-400',
-  },
-  {
-    label: 'Year-on-year',
-    value: `+${yoyChange}%`,
-    sub: 'vs 2024',
-    icon: <TrendingUp size={17} />,
-    iconBg: 'bg-rose-100 dark:bg-rose-500/15',
-    iconColor: 'text-rose-600 dark:text-rose-400',
-  },
-]
 
 export default function SpendingTrendsPage() {
   const { customer } = useCustomer()
   if (!customer) return <NoCustomerSelected />
+
+  const peakMonth = customer.monthlyTrend.reduce((a, b) => (a.amount > b.amount ? a : b))
+  const yoySign = customer.spendChange >= 0 ? '+' : ''
+
+  const STATS = [
+    {
+      label: 'Total YTD spend',
+      value: `R ${customer.totalSpend.toLocaleString()}`,
+      sub: 'Jan – Dec',
+      icon: <BarChart2 size={17} />,
+      iconBg: 'bg-brand-100 dark:bg-brand-500/15',
+      iconColor: 'text-brand-600 dark:text-brand-400',
+    },
+    {
+      label: 'Monthly average',
+      value: `R ${customer.avgMonthlySpend.toLocaleString()}`,
+      sub: 'per month',
+      icon: <Calendar size={17} />,
+      iconBg: 'bg-blue-100 dark:bg-blue-500/15',
+      iconColor: 'text-blue-600 dark:text-blue-400',
+    },
+    {
+      label: 'Peak month',
+      value: peakMonth.month,
+      sub: `R ${peakMonth.amount.toLocaleString()}`,
+      icon: <Award size={17} />,
+      iconBg: 'bg-amber-100 dark:bg-amber-500/15',
+      iconColor: 'text-amber-600 dark:text-amber-400',
+    },
+    {
+      label: 'Year-on-year',
+      value: `${yoySign}${customer.spendChange.toFixed(1)}%`,
+      sub: 'vs last year',
+      icon: <TrendingUp size={17} />,
+      iconBg: 'bg-rose-100 dark:bg-rose-500/15',
+      iconColor: 'text-rose-600 dark:text-rose-400',
+    },
+  ]
 
   return (
     <div className="space-y-6 max-w-[1400px]">
@@ -94,12 +90,12 @@ export default function SpendingTrendsPage() {
       </div>
 
       {/* Main trend chart — full width */}
-      <SpendingTrendChart />
+      <SpendingTrendChart customer={customer} />
 
       {/* Category trends + top movers */}
       <div className="grid grid-cols-1 xl:grid-cols-[1fr_360px] gap-4">
-        <CategoryTrendChart />
-        <TopMovers />
+        <CategoryTrendChart customer={customer} />
+        <TopMovers customer={customer} />
       </div>
     </div>
   )
