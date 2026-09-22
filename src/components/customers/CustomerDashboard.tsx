@@ -1,3 +1,4 @@
+import { useState } from 'react'
 import { ArrowLeft, MapPin, Calendar, TrendingUp, TrendingDown, Lightbulb } from 'lucide-react'
 import {
   AreaChart,
@@ -11,7 +12,7 @@ import {
   Cell,
   type TooltipProps,
 } from 'recharts'
-import type { CustomerProfile } from '@/data/customers'
+import type { CustomerProfile, CustomerCategory } from '@/data/customers'
 
 const RISK_STYLES = {
   Low: 'bg-emerald-100 dark:bg-emerald-500/15 text-emerald-700 dark:text-emerald-400',
@@ -23,17 +24,6 @@ const STATUS_STYLES = {
   Active: 'bg-emerald-100 dark:bg-emerald-500/15 text-emerald-700 dark:text-emerald-400',
   Dormant: 'bg-gray-100 dark:bg-white/10 text-gray-600 dark:text-gray-400',
   Restricted: 'bg-rose-100 dark:bg-rose-500/15 text-rose-700 dark:text-rose-400',
-}
-
-function DonutTooltip({ active, payload }: TooltipProps<number, string>) {
-  if (!active || !payload?.length) return null
-  const d = payload[0]
-  return (
-    <div className="bg-white dark:bg-[#1C1B2E] border border-gray-100 dark:border-[#2D2C44] rounded-xl shadow-lg px-3 py-2 text-xs">
-      <p className="font-semibold text-gray-800 dark:text-gray-200">{d.name}</p>
-      <p className="text-gray-500 dark:text-gray-400">{d.value}%</p>
-    </div>
-  )
 }
 
 function TrendTooltip({ active, payload, label }: TooltipProps<number, string>) {
@@ -54,6 +44,7 @@ interface Props {
 }
 
 export default function CustomerDashboard({ customer, onBack }: Props) {
+  const [hovered, setHovered] = useState<CustomerCategory | null>(null)
   const isPositive = customer.spendChange >= 0
   const topCategory = customer.categories[0]
 
@@ -244,7 +235,7 @@ export default function CustomerDashboard({ customer, onBack }: Props) {
             Category Breakdown
           </h3>
 
-          <div className="flex flex-col items-center gap-4">
+          <div className="flex flex-col items-center gap-3">
             {/* Donut */}
             <div className="relative w-40 h-40 flex-shrink-0">
               <ResponsiveContainer width="100%" height="100%">
@@ -258,22 +249,60 @@ export default function CustomerDashboard({ customer, onBack }: Props) {
                     paddingAngle={3}
                     dataKey="pct"
                     nameKey="name"
-                    strokeWidth={0}>
+                    strokeWidth={0}
+                    onMouseEnter={(data) =>
+                      setHovered({
+                        name: data.name,
+                        amount: data.amount,
+                        pct: data.pct,
+                        color: data.color,
+                      })
+                    }
+                    onMouseLeave={() => setHovered(null)}>
                     {customer.categories.map((cat, i) => (
-                      <Cell key={i} fill={cat.color} />
+                      <Cell
+                        key={i}
+                        fill={cat.color}
+                        opacity={hovered && hovered.name !== cat.name ? 0.4 : 1}
+                        style={{ transition: 'opacity 150ms' }}
+                      />
                     ))}
                   </Pie>
-                  <Tooltip content={<DonutTooltip />} />
                 </PieChart>
               </ResponsiveContainer>
               <div className="absolute inset-0 flex flex-col items-center justify-center pointer-events-none">
-                <span className="text-xs text-gray-400 dark:text-gray-500">Top</span>
-                <span className="text-sm font-bold text-gray-900 dark:text-white leading-tight">
-                  {topCategory.name}
+                <span className="text-xs text-gray-400 dark:text-gray-500">
+                  {hovered ? hovered.pct + '%' : 'Top'}
                 </span>
-                <span className="text-xs font-semibold" style={{ color: topCategory.color }}>
-                  {topCategory.pct}%
+                <span className="text-sm font-bold text-gray-900 dark:text-white leading-tight text-center px-2">
+                  {hovered ? hovered.name : topCategory.name}
                 </span>
+                {!hovered && (
+                  <span className="text-xs font-semibold" style={{ color: topCategory.color }}>
+                    {topCategory.pct}%
+                  </span>
+                )}
+              </div>
+            </div>
+
+            {/* Hover detail strip */}
+            <div className={`w-full transition-opacity duration-150 ${hovered ? 'opacity-100' : 'opacity-0'}`}>
+              <div className="flex items-center justify-between px-3 py-2 rounded-xl bg-gray-50 dark:bg-white/5 border border-gray-100 dark:border-white/5">
+                <div className="flex items-center gap-2">
+                  <span
+                    className="w-2 h-2 rounded-full flex-shrink-0"
+                    style={{ background: hovered?.color }}
+                  />
+                  <span className="text-xs font-semibold text-gray-800 dark:text-gray-200">
+                    {hovered?.name}
+                  </span>
+                </div>
+                <div className="flex items-center gap-3">
+                  <span className="text-xs text-gray-400 dark:text-gray-500">{hovered?.pct}%</span>
+                  <span className="text-xs font-semibold text-gray-700 dark:text-gray-300">
+                    R {hovered?.amount.toLocaleString()}
+                  </span>
+                </div>
               </div>
             </div>
 

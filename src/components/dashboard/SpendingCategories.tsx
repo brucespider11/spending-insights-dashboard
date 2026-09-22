@@ -1,4 +1,5 @@
-import { PieChart, Pie, Cell, Tooltip, ResponsiveContainer, type TooltipProps } from 'recharts'
+import { useState } from 'react'
+import { PieChart, Pie, Cell, ResponsiveContainer } from 'recharts'
 
 interface CategoryItem {
   name: string
@@ -14,22 +15,13 @@ const DEFAULT_CATEGORIES: CategoryItem[] = [
   { name: 'Entertainment', value: 21, color: '#3b82f6' },
 ]
 
-function CustomTooltip({ active, payload }: TooltipProps<number, string>) {
-  if (!active || !payload?.length) return null
-  const d = payload[0]
-  return (
-    <div className="bg-white dark:bg-[#1C1B2E] border border-gray-100 dark:border-[#2D2C44] rounded-xl shadow-lg px-3 py-2">
-      <p className="text-xs font-semibold text-gray-900 dark:text-white">{d.name}</p>
-      <p className="text-xs text-gray-500 dark:text-gray-500">{d.value}%</p>
-    </div>
-  )
-}
-
 interface Props {
   categories?: CategoryItem[]
 }
 
 export default function SpendingCategories({ categories }: Props) {
+  const [hovered, setHovered] = useState<(CategoryItem & { value: number }) | null>(null)
+
   const list = (categories ?? DEFAULT_CATEGORIES).map((c) => ({
     ...c,
     value: c.pct ?? c.value ?? 0,
@@ -55,21 +47,45 @@ export default function SpendingCategories({ categories }: Props) {
               outerRadius={70}
               paddingAngle={3}
               dataKey="value"
-              strokeWidth={0}>
+              strokeWidth={0}
+              onMouseEnter={(data) => setHovered(data)}
+              onMouseLeave={() => setHovered(null)}>
               {list.map((cat, i) => (
-                <Cell key={i} fill={cat.color} />
+                <Cell
+                  key={i}
+                  fill={cat.color}
+                  opacity={hovered && hovered.name !== cat.name ? 0.4 : 1}
+                  style={{ transition: 'opacity 150ms' }}
+                />
               ))}
             </Pie>
-            <Tooltip content={<CustomTooltip />} />
           </PieChart>
         </ResponsiveContainer>
         {/* Centre label */}
         <div className="absolute inset-0 flex flex-col items-center justify-center pointer-events-none">
-          <span className="text-sm font-bold text-gray-900 dark:text-white leading-tight">
-            {topCategory?.name}
+          <span className="text-sm font-bold text-gray-900 dark:text-white leading-tight text-center px-2">
+            {hovered ? hovered.name : topCategory?.name}
           </span>
-          <span className="text-xs font-semibold" style={{ color: topCategory?.color }}>
-            {topCategory?.value}%
+          <span className="text-xs font-semibold" style={{ color: hovered ? hovered.color : topCategory?.color }}>
+            {hovered ? hovered.value : topCategory?.value}%
+          </span>
+        </div>
+      </div>
+
+      {/* Hover detail strip */}
+      <div className={`transition-opacity duration-150 ${hovered ? 'opacity-100' : 'opacity-0'}`}>
+        <div className="flex items-center justify-between px-3 py-2 rounded-xl bg-gray-50 dark:bg-white/5 border border-gray-100 dark:border-white/5">
+          <div className="flex items-center gap-2">
+            <span
+              className="w-2 h-2 rounded-full flex-shrink-0"
+              style={{ background: hovered?.color }}
+            />
+            <span className="text-xs font-semibold text-gray-800 dark:text-gray-200">
+              {hovered?.name}
+            </span>
+          </div>
+          <span className="text-xs font-semibold text-gray-700 dark:text-gray-300">
+            {hovered?.value}%
           </span>
         </div>
       </div>

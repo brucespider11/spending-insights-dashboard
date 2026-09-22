@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import { flushSync } from 'react-dom'
 import { useNavigate } from 'react-router-dom'
 import { Search, AlertCircle } from 'lucide-react'
 import IdentifierTypeSelect from './IdentifierTypeSelect'
@@ -31,6 +32,7 @@ export default function CustomerLookup({ onFound }: Props) {
   const [loading, setLoading] = useState(false)
   const [loadMsg, setLoadMsg] = useState('')
   const [notFound, setNotFound] = useState(false)
+  const [loadingCif, setLoadingCif] = useState<string | null>(null)
 
   const handleSearch = async (searchValue = value, searchType = idType) => {
     if (!searchValue.trim()) return
@@ -51,17 +53,21 @@ export default function CustomerLookup({ onFound }: Props) {
       onFound?.(found)
       navigate('/')
     } else {
+      setLoadingCif(null)
       setNotFound(true)
     }
   }
 
   const quickLookup = (customer: (typeof CUSTOMERS)[0]) => {
+    // flushSync forces the highlight to paint before React batches in setLoading(true)
+    flushSync(() => setLoadingCif(customer.cif))
     setIdType('CIF')
     setValue(customer.cif)
     handleSearch(customer.cif, 'CIF')
   }
 
-  if (loading) {
+  // Full-page spinner only for manual form searches — quick lookups show inline button spinner
+  if (loading && !loadingCif) {
     return (
       <div className="flex flex-col items-center justify-center gap-6 py-20 text-center">
         <div className="w-14 h-14 rounded-full border-4 border-brand-200 dark:border-brand-900 border-t-brand-600 animate-spin" />
@@ -162,34 +168,47 @@ export default function CustomerLookup({ onFound }: Props) {
             Demo profiles
           </p>
           <div className="flex flex-col gap-2">
-            {CUSTOMERS.map((c) => (
-              <button
-                key={c.cif}
-                onClick={() => quickLookup(c)}
-                className="flex items-center gap-3 px-4 py-3 rounded-xl
-                           bg-white dark:bg-[#1C1B2E]
-                           border border-gray-100 dark:border-[#2D2C44]
-                           hover:border-brand-300 dark:hover:border-brand-600/50
-                           hover:bg-brand-50/30 dark:hover:bg-brand-600/5
-                           transition-all duration-150 text-left group">
-                <div
-                  className="w-8 h-8 rounded-full flex items-center justify-center text-white text-xs font-bold flex-shrink-0"
-                  style={{ background: c.segmentColor }}>
-                  {c.initials}
-                </div>
-                <div className="min-w-0 flex-1">
-                  <p className="text-sm font-semibold text-gray-800 dark:text-gray-200 group-hover:text-brand-600 dark:group-hover:text-brand-400 transition-colors truncate">
-                    {c.name}
-                  </p>
-                  <p className="text-xs text-gray-400 dark:text-gray-600">
-                    CIF {c.cif} · Acc {c.accountNumber} · {c.segment}
-                  </p>
-                </div>
-                <span className="text-xs text-brand-400 dark:text-brand-500 opacity-0 group-hover:opacity-100 transition-opacity flex-shrink-0">
-                  Look up →
-                </span>
-              </button>
-            ))}
+            {CUSTOMERS.map((c) => {
+              const isLoadingThis = loadingCif === c.cif
+              return (
+                <button
+                  key={c.cif}
+                  onClick={() => quickLookup(c)}
+                  disabled={loading}
+                  className={`flex items-center gap-3 px-4 py-3 rounded-xl
+                             border transition-all duration-150 text-left group
+                             ${
+                               isLoadingThis
+                                 ? 'border-brand-400 dark:border-brand-500 bg-brand-50 dark:bg-brand-600/10'
+                                 : 'bg-white dark:bg-[#1C1B2E] border-gray-100 dark:border-[#2D2C44] hover:border-brand-300 dark:hover:border-brand-600/50 hover:bg-brand-50/30 dark:hover:bg-brand-600/5'
+                             }`}>
+                  <div
+                    className="w-8 h-8 rounded-full flex items-center justify-center text-white text-xs font-bold flex-shrink-0"
+                    style={{ background: c.segmentColor }}>
+                    {c.initials}
+                  </div>
+                  <div className="min-w-0 flex-1">
+                    <p
+                      className={`text-sm font-semibold truncate transition-colors
+                        ${isLoadingThis ? 'text-brand-600 dark:text-brand-400' : 'text-gray-800 dark:text-gray-200 group-hover:text-brand-600 dark:group-hover:text-brand-400'}`}>
+                      {c.name}
+                    </p>
+                    <p className="text-xs text-gray-400 dark:text-gray-600">
+                      CIF {c.cif} · Acc {c.accountNumber} · {c.segment}
+                    </p>
+                  </div>
+                  <span className="flex-shrink-0">
+                    {isLoadingThis ? (
+                      <span className="w-3.5 h-3.5 rounded-full border-2 border-brand-300 dark:border-brand-700 border-t-brand-600 dark:border-t-brand-400 animate-spin block" />
+                    ) : (
+                      <span className="text-xs text-brand-400 dark:text-brand-500 opacity-0 group-hover:opacity-100 transition-opacity">
+                        Look up →
+                      </span>
+                    )}
+                  </span>
+                </button>
+              )
+            })}
           </div>
         </div>
       </div>
