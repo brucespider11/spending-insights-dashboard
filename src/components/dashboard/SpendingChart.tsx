@@ -68,7 +68,7 @@ function CustomTooltip({ active, payload, label }: TooltipProps<number, string>)
 }
 
 export default function SpendingChart({ customer }: Props) {
-  const [period, setPeriod] = useState<TimePeriod>('6M')
+  const [period, setPeriod] = useState<TimePeriod>('12M')
   const allData = buildChartData(customer)
   const data = allData.slice(-PERIOD_MONTHS[period])
   const totalSaved = data.reduce((s, d) => s + (d.income - d.spend), 0)

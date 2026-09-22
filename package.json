@@ -15,7 +15,7 @@
     "lint": "oxlint src",
     "typecheck": "tsc --noEmit",
     "validate": "npm run format:check && npm run lint && npm run typecheck && npm run test && npm run build",
-    "docker": "docker rm -f spending-dashboard 2>/dev/null; docker build -t spending-dashboard . && docker run -d --name spending-dashboard -p 8080:80 spending-dashboard && echo 'Running at http://localhost:8080'"
+    "docker": "docker rm -f spending-insights-dashboard 2>/dev/null; docker build -t spending-insights-dashboard . && docker run -d --name spending-insights-dashboard -p 8080:80 spending-insights-dashboard && echo 'Running at http://localhost:8080'"
   },
   "dependencies": {
     "lucide-react": "^0.446.0",

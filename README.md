@@ -101,11 +101,18 @@ npm run validate  # then validate
 > On macOS, open **Rancher Desktop** from Applications and wait for the daemon to start before running the commands below.
 
 ```bash
+# Build and run in one command
+npm run docker
+```
+
+Or manually:
+
+```bash
 # Build the image
-docker build -t spending-insights .
+docker build -t spending-insights-dashboard .
 
 # Run the container
-docker run -p 8080:80 spending-insights
+docker run -d --name spending-insights-dashboard -p 8080:80 spending-insights-dashboard
 ```
 
 The app will be available at **http://localhost:8080**
