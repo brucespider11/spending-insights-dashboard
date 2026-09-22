@@ -9,21 +9,7 @@ import {
   ResponsiveContainer,
   type TooltipProps,
 } from 'recharts'
-
-export const MONTHLY_DATA = [
-  { month: 'Jan', in: 52000, out: 38400 },
-  { month: 'Feb', in: 48000, out: 41200 },
-  { month: 'Mar', in: 61000, out: 39800 },
-  { month: 'Apr', in: 55000, out: 43600 },
-  { month: 'May', in: 67000, out: 51200 },
-  { month: 'Jun', in: 72000, out: 58400 },
-  { month: 'Jul', in: 69000, out: 54800 },
-  { month: 'Aug', in: 81000, out: 62100 },
-  { month: 'Sep', in: 76000, out: 59300 },
-  { month: 'Oct', in: 88000, out: 71400 },
-  { month: 'Nov', in: 94000, out: 78200 },
-  { month: 'Dec', in: 103000, out: 86500 },
-]
+import type { CustomerProfile } from '@/data/customers'
 
 type Tab = 'all' | 'income' | 'expenses'
 const TABS: { key: Tab; label: string }[] = [
@@ -70,8 +56,18 @@ function CustomTooltip({ active, payload, label }: TooltipProps<number, string>)
   )
 }
 
-export default function MoneyFlowChart() {
+interface Props {
+  customer: CustomerProfile
+}
+
+export default function MoneyFlowChart({ customer }: Props) {
   const [tab, setTab] = useState<Tab>('all')
+
+  const monthlyData = customer.monthlyTrend.map((m) => ({
+    month: m.month,
+    in: customer.monthlyIncome,
+    out: m.amount,
+  }))
 
   return (
     <div className="card p-6 flex flex-col gap-5">
@@ -119,7 +115,7 @@ export default function MoneyFlowChart() {
       <div className="h-72">
         <ResponsiveContainer width="100%" height="100%">
           <BarChart
-            data={MONTHLY_DATA}
+            data={monthlyData}
             barGap={4}
             barCategoryGap="30%"
             margin={{ top: 4, right: 4, bottom: 0, left: -10 }}>

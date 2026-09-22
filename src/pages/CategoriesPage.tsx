@@ -1,4 +1,5 @@
 import { useState, useMemo } from 'react'
+import { Link, useNavigate } from 'react-router-dom'
 import { Search, ArrowUpRight, ArrowDownLeft, LayoutGrid } from 'lucide-react'
 import CategoryCard from '@/components/categories/CategoryCard'
 import { CATEGORIES, getPeriodAmount } from '@/data/categories'
@@ -17,34 +18,42 @@ const FILTERS: { key: Filter; label: string }[] = [
 
 export default function CategoriesPage() {
   const { customer } = useCustomer()
+  const navigate = useNavigate()
   const [filter, setFilter] = useState<Filter>('all')
   const [search, setSearch] = useState('')
   const [timePeriod, setTimePeriod] = useState<TimePeriod>('12M')
 
   const nMonths = PERIOD_MONTHS[timePeriod]
 
+  const customerCategories = useMemo(() => {
+    if (!customer) return CATEGORIES
+    const map = new Map(customer.categories.map((c) => [c.name, c.amount]))
+    return CATEGORIES.map((cat) => ({
+      ...cat,
+      amount: map.get(cat.name) ?? cat.amount,
+    }))
+  }, [customer])
+
   const visible = useMemo(() => {
-    let list: Category[] = CATEGORIES
+    let list: Category[] = customerCategories
     if (filter !== 'all') list = list.filter((c) => c.type === filter)
     if (search.trim())
       list = list.filter((c) => c.name.toLowerCase().includes(search.toLowerCase()))
     return list
-  }, [filter, search])
+  }, [filter, search, customerCategories])
 
   if (!customer) return <NoCustomerSelected />
 
-  const expenseCount = CATEGORIES.filter((c) => c.type === 'expense').length
-  const incomeCount = CATEGORIES.filter((c) => c.type === 'income').length
+  const expenseCount = customerCategories.filter((c) => c.type === 'expense').length
+  const incomeCount = customerCategories.filter((c) => c.type === 'income').length
 
-  const periodTotalExpenses = CATEGORIES.filter((c) => c.type === 'expense').reduce(
-    (s, c) => s + getPeriodAmount(c, nMonths),
-    0
-  )
+  const periodTotalExpenses = customerCategories
+    .filter((c) => c.type === 'expense')
+    .reduce((s, c) => s + getPeriodAmount(c, nMonths), 0)
 
-  const periodTotalIncome = CATEGORIES.filter((c) => c.type === 'income').reduce(
-    (s, c) => s + getPeriodAmount(c, nMonths),
-    0
-  )
+  const periodTotalIncome = customerCategories
+    .filter((c) => c.type === 'income')
+    .reduce((s, c) => s + getPeriodAmount(c, nMonths), 0)
 
   const totalForType = (cat: Category) =>
     cat.type === 'expense' ? periodTotalExpenses : periodTotalIncome
@@ -53,9 +62,9 @@ export default function CategoriesPage() {
     <div className="space-y-6 max-w-[1400px]">
       {/* Breadcrumb */}
       <nav className="flex items-center gap-1.5 text-xs text-gray-400 dark:text-gray-600">
-        <span className="hover:text-gray-600 dark:hover:text-gray-400 cursor-pointer transition-colors">
+        <Link to="/" className="hover:text-gray-600 dark:hover:text-gray-400 transition-colors">
           Dashboards
-        </span>
+        </Link>
         <span>/</span>
         <span className="text-gray-700 dark:text-gray-300 font-medium">Categories</span>
       </nav>
@@ -82,7 +91,7 @@ export default function CategoriesPage() {
           <div>
             <p className="text-xs text-gray-500 dark:text-gray-500">Total categories</p>
             <p className="text-lg font-bold text-gray-900 dark:text-white">
-              {CATEGORIES.length}
+              {customerCategories.length}
               <span className="text-xs font-normal text-gray-400 dark:text-gray-600 ml-1.5">
                 ({expenseCount} expense · {incomeCount} income)
               </span>
@@ -122,8 +131,8 @@ export default function CategoriesPage() {
           {FILTERS.map((f) => {
             const count =
               f.key === 'all'
-                ? CATEGORIES.length
-                : CATEGORIES.filter((c) => c.type === f.key).length
+                ? customerCategories.length
+                : customerCategories.filter((c) => c.type === f.key).length
             return (
               <button
                 key={f.key}
@@ -167,9 +176,9 @@ export default function CategoriesPage() {
           />
         </div>
 
-        {visible.length !== CATEGORIES.length && (
+        {visible.length !== customerCategories.length && (
           <p className="text-xs text-gray-400 dark:text-gray-600 flex-shrink-0">
-            Showing {visible.length} of {CATEGORIES.length}
+            Showing {visible.length} of {customerCategories.length}
           </p>
         )}
       </div>
@@ -183,6 +192,7 @@ export default function CategoriesPage() {
               category={cat}
               totalForType={totalForType(cat)}
               displayAmount={getPeriodAmount(cat, nMonths)}
+              onClick={() => navigate('/transactions')}
             />
           ))}
         </div>

@@ -43,15 +43,18 @@ interface Props {
   category: Category
   totalForType: number
   displayAmount?: number
+  onClick?: () => void
 }
 
-export default function CategoryCard({ category, totalForType, displayAmount }: Props) {
+export default function CategoryCard({ category, totalForType, displayAmount, onClick }: Props) {
   const amount = displayAmount ?? category.amount
   const pct = ((amount / totalForType) * 100).toFixed(1)
   const isPositive = category.change >= 0
 
   return (
-    <div className="card p-5 flex flex-col gap-3 hover:shadow-lg dark:hover:border-[#3D3C54] transition-all duration-200 cursor-pointer group">
+    <div
+      onClick={onClick}
+      className="card p-5 flex flex-col gap-3 hover:shadow-lg dark:hover:border-[#3D3C54] transition-all duration-200 cursor-pointer group">
       {/* Icon + badge */}
       <div className="flex items-start justify-between">
         <div

@@ -256,6 +256,7 @@ export default function CustomerDashboard({ customer, onBack }: Props) {
                         amount: data.amount,
                         pct: data.pct,
                         color: data.color,
+                        change: data.change,
                       })
                     }
                     onMouseLeave={() => setHovered(null)}>

@@ -1,22 +1,5 @@
 import { useState } from 'react'
-
-const INCOME = [
-  { name: 'Salary', amount: 540000, color: '#10b981' },
-  { name: 'Freelance', amount: 124000, color: '#3b82f6' },
-  { name: 'Rental Income', amount: 120000, color: '#7c3aed' },
-  { name: 'Investments', amount: 82000, color: '#f59e0b' },
-]
-
-const EXPENSES = [
-  { name: 'Groceries', amount: 98400, color: '#7c3aed' },
-  { name: 'Shopping', amount: 89400, color: '#f59e0b' },
-  { name: 'Dining', amount: 67200, color: '#10b981' },
-  { name: 'Transport', amount: 54800, color: '#3b82f6' },
-  { name: 'Entertainment', amount: 43600, color: '#ec4899' },
-  { name: 'Utilities', amount: 38200, color: '#ef4444' },
-  { name: 'Healthcare', amount: 29800, color: '#f97316' },
-  { name: 'Other', amount: 263500, color: '#9ca3af' },
-]
+import type { CustomerProfile } from '@/data/customers'
 
 type Tab = 'income' | 'expenses'
 
@@ -25,15 +8,15 @@ function CategoryRow({
   amount,
   color,
   max,
+  total,
 }: {
   name: string
   amount: number
   color: string
   max: number
+  total: number
 }) {
   const pct = Math.round((amount / max) * 100)
-  const total =
-    INCOME.reduce((s, c) => s + c.amount, 0) + EXPENSES.reduce((s, c) => s + c.amount, 0)
   const share = ((amount / total) * 100).toFixed(1)
 
   return (
@@ -57,8 +40,20 @@ function CategoryRow({
   )
 }
 
-export default function CategoryBreakdown() {
+interface Props {
+  customer: CustomerProfile
+}
+
+export default function CategoryBreakdown({ customer }: Props) {
   const [tab, setTab] = useState<Tab>('expenses')
+
+  const EXPENSES = customer.categories.map((c) => ({
+    name: c.name,
+    amount: c.amount,
+    color: c.color,
+  }))
+
+  const INCOME = [{ name: 'Primary Income', amount: customer.monthlyIncome * 12, color: '#10b981' }]
 
   const list = tab === 'income' ? INCOME : EXPENSES
   const max = Math.max(...list.map((c) => c.amount))
@@ -117,7 +112,7 @@ export default function CategoryBreakdown() {
 
       <div>
         {list.map((cat) => (
-          <CategoryRow key={cat.name} {...cat} max={max} />
+          <CategoryRow key={cat.name} {...cat} max={max} total={total} />
         ))}
       </div>
     </div>

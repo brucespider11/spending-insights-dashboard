@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import { Link } from 'react-router-dom'
 import { Store, Trophy, Navigation, BarChart2 } from 'lucide-react'
 import NoCustomerSelected from '@/components/common/NoCustomerSelected'
 import MerchantSpendChart from '@/components/merchants/MerchantSpendChart'
@@ -80,9 +81,9 @@ export default function MerchantInsightsPage() {
     <div className="space-y-6 max-w-[1400px]">
       {/* Breadcrumb */}
       <nav className="flex items-center gap-1.5 text-xs text-gray-400 dark:text-gray-600">
-        <span className="hover:text-gray-600 dark:hover:text-gray-400 cursor-pointer transition-colors">
+        <Link to="/" className="hover:text-gray-600 dark:hover:text-gray-400 transition-colors">
           Dashboards
-        </span>
+        </Link>
         <span>/</span>
         <span className="text-gray-700 dark:text-gray-300 font-medium">Merchant Insights</span>
       </nav>

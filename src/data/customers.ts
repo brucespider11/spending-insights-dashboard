@@ -12,6 +12,7 @@ export interface CustomerCategory {
   amount: number
   pct: number
   color: string
+  change: number
 }
 
 export interface CustomerProfile {
@@ -57,12 +58,12 @@ export const CUSTOMERS: CustomerProfile[] = [
     spendChange: 18.2,
     transactionCount: 842,
     categories: [
-      { name: 'Dining', amount: 87400, pct: 28, color: '#10b981' },
-      { name: 'Entertainment', amount: 68700, pct: 22, color: '#ec4899' },
-      { name: 'Shopping', amount: 56200, pct: 18, color: '#f59e0b' },
-      { name: 'Transport', amount: 34400, pct: 11, color: '#3b82f6' },
-      { name: 'Subscriptions', amount: 18700, pct: 6, color: '#14b8a6' },
-      { name: 'Other', amount: 47000, pct: 15, color: '#9ca3af' },
+      { name: 'Dining', amount: 87400, pct: 28, color: '#10b981', change: 28 },
+      { name: 'Entertainment', amount: 68700, pct: 22, color: '#ec4899', change: 22 },
+      { name: 'Shopping', amount: 56200, pct: 18, color: '#f59e0b', change: 14 },
+      { name: 'Transport', amount: 34400, pct: 11, color: '#3b82f6', change: 7 },
+      { name: 'Subscriptions', amount: 18700, pct: 6, color: '#14b8a6', change: 12 },
+      { name: 'Other', amount: 47000, pct: 15, color: '#9ca3af', change: 0 },
     ],
     monthlyTrend: [
       { month: 'Jan', amount: 19200 },
@@ -125,12 +126,12 @@ export const CUSTOMERS: CustomerProfile[] = [
     spendChange: 4.3,
     transactionCount: 1204,
     categories: [
-      { name: 'Groceries', amount: 182400, pct: 35, color: '#7c3aed' },
-      { name: 'Education', amount: 104800, pct: 20, color: '#6366f1' },
-      { name: 'Utilities', amount: 78600, pct: 15, color: '#ef4444' },
-      { name: 'Healthcare', amount: 52400, pct: 10, color: '#f97316' },
-      { name: 'Transport', amount: 41900, pct: 8, color: '#3b82f6' },
-      { name: 'Other', amount: 63700, pct: 12, color: '#9ca3af' },
+      { name: 'Groceries', amount: 182400, pct: 35, color: '#7c3aed', change: 11 },
+      { name: 'Education', amount: 104800, pct: 20, color: '#6366f1', change: 15 },
+      { name: 'Utilities', amount: 78600, pct: 15, color: '#ef4444', change: 9 },
+      { name: 'Healthcare', amount: 52400, pct: 10, color: '#f97316', change: -4 },
+      { name: 'Transport', amount: 41900, pct: 8, color: '#3b82f6', change: 5 },
+      { name: 'Other', amount: 63700, pct: 12, color: '#9ca3af', change: 0 },
     ],
     monthlyTrend: [
       { month: 'Jan', amount: 40500 },
@@ -194,12 +195,12 @@ export const CUSTOMERS: CustomerProfile[] = [
     spendChange: 22.8,
     transactionCount: 2187,
     categories: [
-      { name: 'Travel', amount: 254200, pct: 30, color: '#06b6d4' },
-      { name: 'Shopping', amount: 211800, pct: 25, color: '#f59e0b' },
-      { name: 'Dining', amount: 169400, pct: 20, color: '#10b981' },
-      { name: 'Entertainment', amount: 84700, pct: 10, color: '#ec4899' },
-      { name: 'Utilities', amount: 67800, pct: 8, color: '#ef4444' },
-      { name: 'Other', amount: 59300, pct: 7, color: '#9ca3af' },
+      { name: 'Travel', amount: 254200, pct: 30, color: '#06b6d4', change: -18 },
+      { name: 'Shopping', amount: 211800, pct: 25, color: '#f59e0b', change: -9 },
+      { name: 'Dining', amount: 169400, pct: 20, color: '#10b981', change: 8 },
+      { name: 'Entertainment', amount: 84700, pct: 10, color: '#ec4899', change: -6 },
+      { name: 'Utilities', amount: 67800, pct: 8, color: '#ef4444', change: 5 },
+      { name: 'Other', amount: 59300, pct: 7, color: '#9ca3af', change: 0 },
     ],
     monthlyTrend: [
       { month: 'Jan', amount: 52000 },
@@ -265,12 +266,12 @@ export const CUSTOMERS: CustomerProfile[] = [
     spendChange: 24.6,
     transactionCount: 512,
     categories: [
-      { name: 'Transport', amount: 40000, pct: 27, color: '#3b82f6' },
-      { name: 'Dining', amount: 35000, pct: 24, color: '#10b981' },
-      { name: 'Entertainment', amount: 24000, pct: 16, color: '#ec4899' },
-      { name: 'Shopping', amount: 21000, pct: 14, color: '#f59e0b' },
-      { name: 'Groceries', amount: 13000, pct: 9, color: '#7c3aed' },
-      { name: 'Other', amount: 15000, pct: 10, color: '#9ca3af' },
+      { name: 'Transport', amount: 40000, pct: 27, color: '#3b82f6', change: 42 },
+      { name: 'Dining', amount: 35000, pct: 24, color: '#10b981', change: 36 },
+      { name: 'Entertainment', amount: 24000, pct: 16, color: '#ec4899', change: 28 },
+      { name: 'Shopping', amount: 21000, pct: 14, color: '#f59e0b', change: 18 },
+      { name: 'Groceries', amount: 13000, pct: 9, color: '#7c3aed', change: 12 },
+      { name: 'Other', amount: 15000, pct: 10, color: '#9ca3af', change: 0 },
     ],
     monthlyTrend: [
       { month: 'Jan', amount: 8600 },
@@ -333,12 +334,12 @@ export const CUSTOMERS: CustomerProfile[] = [
     spendChange: 9.4,
     transactionCount: 967,
     categories: [
-      { name: 'Dining', amount: 99500, pct: 25, color: '#10b981' },
-      { name: 'Groceries', amount: 87600, pct: 22, color: '#7c3aed' },
-      { name: 'Shopping', amount: 75620, pct: 19, color: '#f59e0b' },
-      { name: 'Travel', amount: 55720, pct: 14, color: '#06b6d4' },
-      { name: 'Healthcare', amount: 43780, pct: 11, color: '#f97316' },
-      { name: 'Other', amount: 35780, pct: 9, color: '#9ca3af' },
+      { name: 'Dining', amount: 99500, pct: 25, color: '#10b981', change: 16 },
+      { name: 'Groceries', amount: 87600, pct: 22, color: '#7c3aed', change: 12 },
+      { name: 'Shopping', amount: 75620, pct: 19, color: '#f59e0b', change: -7 },
+      { name: 'Travel', amount: 55720, pct: 14, color: '#06b6d4', change: 14 },
+      { name: 'Healthcare', amount: 43780, pct: 11, color: '#f97316', change: 8 },
+      { name: 'Other', amount: 35780, pct: 9, color: '#9ca3af', change: 0 },
     ],
     monthlyTrend: [
       { month: 'Jan', amount: 29400 },
@@ -401,12 +402,12 @@ export const CUSTOMERS: CustomerProfile[] = [
     spendChange: 31.4,
     transactionCount: 1648,
     categories: [
-      { name: 'Shopping', amount: 206100, pct: 30, color: '#f59e0b' },
-      { name: 'Dining', amount: 137400, pct: 20, color: '#10b981' },
-      { name: 'Entertainment', amount: 103050, pct: 15, color: '#ec4899' },
-      { name: 'Travel', amount: 82440, pct: 12, color: '#06b6d4' },
-      { name: 'Personal Care', amount: 68700, pct: 10, color: '#8b5cf6' },
-      { name: 'Other', amount: 89310, pct: 13, color: '#9ca3af' },
+      { name: 'Shopping', amount: 206100, pct: 30, color: '#f59e0b', change: 18 },
+      { name: 'Dining', amount: 137400, pct: 20, color: '#10b981', change: 22 },
+      { name: 'Entertainment', amount: 103050, pct: 15, color: '#ec4899', change: 16 },
+      { name: 'Travel', amount: 82440, pct: 12, color: '#06b6d4', change: 24 },
+      { name: 'Personal Care', amount: 68700, pct: 10, color: '#8b5cf6', change: 9 },
+      { name: 'Other', amount: 89310, pct: 13, color: '#9ca3af', change: 0 },
     ],
     monthlyTrend: [
       { month: 'Jan', amount: 38200 },
@@ -469,12 +470,12 @@ export const CUSTOMERS: CustomerProfile[] = [
     spendChange: 2.1,
     transactionCount: 384,
     categories: [
-      { name: 'Groceries', amount: 67550, pct: 35, color: '#7c3aed' },
-      { name: 'Healthcare', amount: 42460, pct: 22, color: '#f97316' },
-      { name: 'Utilities', amount: 32810, pct: 17, color: '#ef4444' },
-      { name: 'Transport', amount: 23160, pct: 12, color: '#3b82f6' },
-      { name: 'Dining', amount: 9650, pct: 5, color: '#10b981' },
-      { name: 'Other', amount: 17370, pct: 9, color: '#9ca3af' },
+      { name: 'Groceries', amount: 67550, pct: 35, color: '#7c3aed', change: 7 },
+      { name: 'Healthcare', amount: 42460, pct: 22, color: '#f97316', change: 11 },
+      { name: 'Utilities', amount: 32810, pct: 17, color: '#ef4444', change: -8 },
+      { name: 'Transport', amount: 23160, pct: 12, color: '#3b82f6', change: -14 },
+      { name: 'Dining', amount: 9650, pct: 5, color: '#10b981', change: -6 },
+      { name: 'Other', amount: 17370, pct: 9, color: '#9ca3af', change: 0 },
     ],
     monthlyTrend: [
       { month: 'Jan', amount: 15200 },

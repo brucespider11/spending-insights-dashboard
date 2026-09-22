@@ -1,63 +1,58 @@
+import { Link } from 'react-router-dom'
 import { ArrowDownLeft, ArrowUpRight, Scale, Hash, Calendar } from 'lucide-react'
-import MoneyFlowChart, { MONTHLY_DATA } from '@/components/transactions/MoneyFlowChart'
+import MoneyFlowChart from '@/components/transactions/MoneyFlowChart'
 import CategoryBreakdown from '@/components/transactions/CategoryBreakdown'
 import NoCustomerSelected from '@/components/common/NoCustomerSelected'
 import { useCustomer } from '@/context/CustomerContext'
-
-const totalIn = MONTHLY_DATA.reduce((s, m) => s + m.in, 0) // 866,000
-const totalOut = MONTHLY_DATA.reduce((s, m) => s + m.out, 0) // 684,900
-const net = totalIn - totalOut // 181,100
-
-const SUMMARY = [
-  {
-    label: 'Money In',
-    value: `R ${totalIn.toLocaleString()}`,
-    change: '+12.4%',
-    positive: true,
-    icon: <ArrowDownLeft size={18} />,
-    iconBg: 'bg-emerald-100 dark:bg-emerald-500/15',
-    iconColor: 'text-emerald-600 dark:text-emerald-400',
-  },
-  {
-    label: 'Money Out',
-    value: `R ${totalOut.toLocaleString()}`,
-    change: '+8.1%',
-    positive: false,
-    icon: <ArrowUpRight size={18} />,
-    iconBg: 'bg-rose-100 dark:bg-rose-500/15',
-    iconColor: 'text-rose-600 dark:text-rose-400',
-  },
-  {
-    label: 'Net Balance',
-    value: `R ${net.toLocaleString()}`,
-    change: '+5.2%',
-    positive: true,
-    icon: <Scale size={18} />,
-    iconBg: 'bg-brand-100 dark:bg-brand-500/15',
-    iconColor: 'text-brand-600 dark:text-brand-400',
-  },
-  {
-    label: 'Transactions',
-    value: '2,840',
-    change: '+6.8%',
-    positive: true,
-    icon: <Hash size={18} />,
-    iconBg: 'bg-blue-100 dark:bg-blue-500/15',
-    iconColor: 'text-blue-600 dark:text-blue-400',
-  },
-]
 
 export default function TransactionsPage() {
   const { customer } = useCustomer()
   if (!customer) return <NoCustomerSelected />
 
+  const totalIn = customer.monthlyIncome * 12
+  const totalOut = customer.totalSpend
+  const net = totalIn - totalOut
+
+  const SUMMARY = [
+    {
+      label: 'Money In',
+      value: `R ${totalIn.toLocaleString()}`,
+      icon: <ArrowDownLeft size={18} />,
+      iconBg: 'bg-emerald-100 dark:bg-emerald-500/15',
+      iconColor: 'text-emerald-600 dark:text-emerald-400',
+    },
+    {
+      label: 'Money Out',
+      value: `R ${totalOut.toLocaleString()}`,
+      change: `+${customer.spendChange}%`,
+      positive: false,
+      icon: <ArrowUpRight size={18} />,
+      iconBg: 'bg-rose-100 dark:bg-rose-500/15',
+      iconColor: 'text-rose-600 dark:text-rose-400',
+    },
+    {
+      label: 'Net Balance',
+      value: `R ${net.toLocaleString()}`,
+      icon: <Scale size={18} />,
+      iconBg: 'bg-brand-100 dark:bg-brand-500/15',
+      iconColor: 'text-brand-600 dark:text-brand-400',
+    },
+    {
+      label: 'Transactions',
+      value: customer.transactionCount.toLocaleString(),
+      icon: <Hash size={18} />,
+      iconBg: 'bg-blue-100 dark:bg-blue-500/15',
+      iconColor: 'text-blue-600 dark:text-blue-400',
+    },
+  ]
+
   return (
     <div className="space-y-6 max-w-[1400px]">
       {/* Breadcrumb */}
       <nav className="flex items-center gap-1.5 text-xs text-gray-400 dark:text-gray-600">
-        <span className="hover:text-gray-600 dark:hover:text-gray-400 cursor-pointer transition-colors">
+        <Link to="/" className="hover:text-gray-600 dark:hover:text-gray-400 transition-colors">
           Dashboards
-        </span>
+        </Link>
         <span>/</span>
         <span className="text-gray-700 dark:text-gray-300 font-medium">Transactions</span>
       </nav>
@@ -95,22 +90,24 @@ export default function TransactionsPage() {
                 {s.value}
               </p>
             </div>
-            <span
-              className={`flex-shrink-0 text-xs font-semibold px-2 py-1 rounded-full
-                ${
-                  s.positive
-                    ? 'bg-emerald-50 dark:bg-emerald-500/10 text-emerald-600 dark:text-emerald-400'
-                    : 'bg-rose-50 dark:bg-rose-500/10 text-rose-600 dark:text-rose-400'
-                }`}>
-              {s.change}
-            </span>
+            {'change' in s && s.change && (
+              <span
+                className={`flex-shrink-0 text-xs font-semibold px-2 py-1 rounded-full
+                  ${
+                    s.positive
+                      ? 'bg-emerald-50 dark:bg-emerald-500/10 text-emerald-600 dark:text-emerald-400'
+                      : 'bg-rose-50 dark:bg-rose-500/10 text-rose-600 dark:text-rose-400'
+                  }`}>
+                {s.change}
+              </span>
+            )}
           </div>
         ))}
       </div>
 
       {/* Charts */}
-      <MoneyFlowChart />
-      <CategoryBreakdown />
+      <MoneyFlowChart customer={customer} />
+      <CategoryBreakdown customer={customer} />
     </div>
   )
 }

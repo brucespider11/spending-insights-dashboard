@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import { Link } from 'react-router-dom'
 import { Check, Zap } from 'lucide-react'
 import { useTheme, type ColorMode } from '@/context/ThemeContext'
 
@@ -54,11 +55,11 @@ export default function SettingsPage() {
     <div className="space-y-6 max-w-[800px]">
       {/* Breadcrumb */}
       <nav className="flex items-center gap-1.5 text-xs text-gray-400 dark:text-gray-600">
-        <span className="hover:text-gray-600 dark:hover:text-gray-400 cursor-pointer transition-colors">
-          Settings
-        </span>
+        <Link to="/" className="hover:text-gray-600 dark:hover:text-gray-400 transition-colors">
+          Dashboards
+        </Link>
         <span>/</span>
-        <span className="text-gray-700 dark:text-gray-300 font-medium">Theme</span>
+        <span className="text-gray-700 dark:text-gray-300 font-medium">Settings</span>
       </nav>
 
       <h1 className="text-xl sm:text-2xl font-bold text-gray-900 dark:text-white">Settings</h1>

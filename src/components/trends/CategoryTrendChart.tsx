@@ -10,6 +10,7 @@ import {
   type TooltipProps,
 } from 'recharts'
 import type { CustomerProfile } from '@/data/customers'
+import PeriodFilter, { type TimePeriod, PERIOD_MONTHS } from '@/components/common/PeriodFilter'
 
 const fmt = (v: number) => `R ${(v / 1000).toFixed(0)}k`
 
@@ -57,6 +58,10 @@ interface Props {
 
 export default function CategoryTrendChart({ customer }: Props) {
   const [hidden, setHidden] = useState<Set<string>>(new Set())
+  const [timePeriod, setTimePeriod] = useState<TimePeriod>('12M')
+
+  const nMonths = PERIOD_MONTHS[timePeriod]
+  const trendSlice = customer.monthlyTrend.slice(-nMonths)
 
   // Top 5 categories by spend, excluding the catch-all 'Other'
   const topCategories = customer.categories.filter((c) => c.name !== 'Other').slice(0, 5)
@@ -67,10 +72,10 @@ export default function CategoryTrendChart({ customer }: Props) {
     color: cat.color,
   }))
 
-  // Distribute each category's annual total across months using the customer's
-  // own monthly spend pattern as the seasonal weight
-  const totalSpend = customer.monthlyTrend.reduce((s, m) => s + m.amount, 0)
-  const categoryMonthly = customer.monthlyTrend.map((m) => {
+  // Distribute each category's annual total across the selected months using
+  // the customer's own monthly spend pattern as the seasonal weight
+  const totalSpend = trendSlice.reduce((s, m) => s + m.amount, 0)
+  const categoryMonthly = trendSlice.map((m) => {
     const weight = totalSpend > 0 ? m.amount / totalSpend : 1 / 12
     const row: Record<string, number | string> = { month: m.month }
     topCategories.forEach((cat) => {
@@ -89,13 +94,16 @@ export default function CategoryTrendChart({ customer }: Props) {
 
   return (
     <div className="card p-6 flex flex-col gap-5">
-      <div>
-        <h2 className="text-base font-semibold text-gray-800 dark:text-gray-200">
-          Category Trends
-        </h2>
-        <p className="text-xs text-gray-500 dark:text-gray-500 mt-0.5">
-          Monthly spend per category — click legend to toggle
-        </p>
+      <div className="flex items-start justify-between gap-4 flex-wrap">
+        <div>
+          <h2 className="text-base font-semibold text-gray-800 dark:text-gray-200">
+            Category Trends
+          </h2>
+          <p className="text-xs text-gray-500 dark:text-gray-500 mt-0.5">
+            Monthly spend per category — click legend to toggle
+          </p>
+        </div>
+        <PeriodFilter value={timePeriod} onChange={setTimePeriod} />
       </div>
 
       {/* Clickable legend */}

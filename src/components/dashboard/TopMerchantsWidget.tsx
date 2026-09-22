@@ -1,16 +1,19 @@
 import { ArrowRight, TrendingUp, TrendingDown, Minus } from 'lucide-react'
 import { Link } from 'react-router-dom'
-import { MERCHANT_DATA } from '@/data/merchants'
+import { MERCHANT_DATA, getPeriodSpend } from '@/data/merchants'
 import type { CustomerProfile } from '@/data/customers'
+import { PERIOD_MONTHS, type TimePeriod } from '@/components/common/PeriodFilter'
 
 interface Props {
   customer: CustomerProfile
+  period?: TimePeriod
 }
 
-export default function TopMerchantsWidget({ customer }: Props) {
+export default function TopMerchantsWidget({ customer, period = '12M' }: Props) {
   const data = MERCHANT_DATA[customer.cif]
   if (!data) return null
 
+  const nMonths = PERIOD_MONTHS[period]
   const top4 = data.merchants.slice(0, 4)
 
   return (
@@ -20,7 +23,9 @@ export default function TopMerchantsWidget({ customer }: Props) {
           <h2 className="text-base font-semibold text-gray-800 dark:text-gray-200">
             Top merchants
           </h2>
-          <p className="text-xs text-gray-400 dark:text-gray-600 mt-0.5">Highest spend YTD</p>
+          <p className="text-xs text-gray-400 dark:text-gray-600 mt-0.5">
+            Highest spend · last {nMonths} months
+          </p>
         </div>
         <Link
           to="/merchants"
@@ -75,7 +80,7 @@ export default function TopMerchantsWidget({ customer }: Props) {
               {/* Spend + change */}
               <div className="mt-3 pt-3 border-t border-gray-100 dark:border-[#2D2C44]">
                 <p className="text-sm font-bold text-gray-900 dark:text-white">
-                  R {merchant.totalSpend.toLocaleString()}
+                  R {getPeriodSpend(merchant, nMonths).toLocaleString()}
                 </p>
                 <span
                   className={`inline-flex items-center gap-0.5 text-[11px] font-semibold mt-0.5 ${changeCls}`}>

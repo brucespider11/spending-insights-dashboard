@@ -1,10 +1,10 @@
 # Customer Spending Insights Dashboard
 
-A responsive analytics dashboard for exploring customer spending behaviour.
+A browser-based analytics dashboard built for customer analysts. Look up any customer by CIF, account number, or ID number, then work through seven focused views — analytics overview, spending trends, transaction flow, category breakdown, merchant rankings, and a structured insights panel that surfaces risk, opportunity, alert, and pattern signals above the charts.
 
-The application allows an analyst to search for a customer using a CIF, account number, ID number, or name, then explore their spending patterns across several focused dashboards.
+Ships with seven realistic customer profiles spanning Youth, Young Professional, Family, Professional, Business Owner, Lifestyle, and Retired segments. Every profile carries authentic spend data, category breakdowns, and analyst-grade insights tailored to their segment.
 
-The project is fully self-contained and uses realistic mock data, so it can be run locally without any backend services or external infrastructure.
+Fully self-contained — no backend, no database, no external services. Clone the repo and `npm run dev` to start.
 
 ---
 

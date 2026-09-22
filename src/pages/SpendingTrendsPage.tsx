@@ -1,3 +1,4 @@
+import { Link } from 'react-router-dom'
 import { Calendar, TrendingUp, BarChart2, Award } from 'lucide-react'
 import SpendingTrendChart from '@/components/trends/SpendingTrendChart'
 import CategoryTrendChart from '@/components/trends/CategoryTrendChart'
@@ -51,9 +52,9 @@ export default function SpendingTrendsPage() {
     <div className="space-y-6 max-w-[1400px]">
       {/* Breadcrumb */}
       <nav className="flex items-center gap-1.5 text-xs text-gray-400 dark:text-gray-600">
-        <span className="hover:text-gray-600 dark:hover:text-gray-400 cursor-pointer transition-colors">
+        <Link to="/" className="hover:text-gray-600 dark:hover:text-gray-400 transition-colors">
           Dashboards
-        </span>
+        </Link>
         <span>/</span>
         <span className="text-gray-700 dark:text-gray-300 font-medium">Spending Trends</span>
       </nav>

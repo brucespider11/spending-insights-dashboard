@@ -1,7 +1,6 @@
 import { useState } from 'react'
 import { TrendingUp, TrendingDown } from 'lucide-react'
 import type { CustomerProfile } from '@/data/customers'
-import { CATEGORIES } from '@/data/categories'
 
 type Tab = 'increases' | 'decreases'
 
@@ -22,13 +21,10 @@ export default function TopMovers({ customer }: Props) {
   // Match each customer category against the global CATEGORIES list to get change%,
   // then compute the R amount difference vs last year
   const movers: Mover[] = customer.categories
-    .filter((cat) => cat.name !== 'Other')
-    .flatMap((cat) => {
-      const globalCat = CATEGORIES.find((c) => c.name === cat.name)
-      const change = globalCat?.change ?? 0
-      if (change === 0) return []
-      const lastYearAmount = Math.round(cat.amount / (1 + change / 100))
-      return [{ name: cat.name, color: cat.color, change, amount: cat.amount - lastYearAmount }]
+    .filter((cat) => cat.name !== 'Other' && cat.change !== 0)
+    .map((cat) => {
+      const lastYearAmount = Math.round(cat.amount / (1 + cat.change / 100))
+      return { name: cat.name, color: cat.color, change: cat.change, amount: cat.amount - lastYearAmount }
     })
 
   const increases = movers.filter((m) => m.change > 0).sort((a, b) => b.change - a.change)
