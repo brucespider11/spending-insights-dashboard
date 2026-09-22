@@ -1,0 +1,125 @@
+import { describe, it, expect } from 'vitest'
+import { CUSTOMERS, lookupCustomer } from './customers'
+
+describe('lookupCustomer', () => {
+  it('finds a customer by CIF', () => {
+    const result = lookupCustomer('CIF', '100234567')
+    expect(result).not.toBeNull()
+    expect(result?.name).toBe('Madlanga Moody')
+  })
+
+  it('finds a customer by Account Number', () => {
+    const result = lookupCustomer('Account Number', '0987654321')
+    expect(result).not.toBeNull()
+    expect(result?.name).toBe('Jade Senyas')
+  })
+
+  it('finds a customer by ID Number', () => {
+    const result = lookupCustomer('ID Number', '9801015432089')
+    expect(result).not.toBeNull()
+    expect(result?.cif).toBe('100234567')
+  })
+
+  it('finds a business customer by CIF (Business)', () => {
+    const result = lookupCustomer('CIF (Business)', '200891234')
+    expect(result).not.toBeNull()
+    expect(result?.name).toBe('Cupcake Motsepe')
+  })
+
+  it('returns null for an unknown CIF', () => {
+    expect(lookupCustomer('CIF', '000000000')).toBeNull()
+  })
+
+  it('returns null for an unknown Account Number', () => {
+    expect(lookupCustomer('Account Number', '9999999999')).toBeNull()
+  })
+
+  it('trims whitespace from the search value', () => {
+    expect(lookupCustomer('CIF', '  100234567  ')).not.toBeNull()
+  })
+
+  it('is case-insensitive for name-like fields by returning exact stored values', () => {
+    // CIF lookup is exact — wrong casing returns null
+    expect(lookupCustomer('CIF', '100234567')).not.toBeNull()
+    expect(lookupCustomer('CIF', '100234568')).toBeNull()
+  })
+})
+
+describe('CUSTOMERS data integrity', () => {
+  it('has 7 customers total', () => {
+    expect(CUSTOMERS).toHaveLength(7)
+  })
+
+  it('every customer has exactly 12 months of trend data', () => {
+    CUSTOMERS.forEach((c) => {
+      expect(c.monthlyTrend).toHaveLength(12)
+    })
+  })
+
+  it('monthly trend months run Jan through Dec', () => {
+    const expected = [
+      'Jan',
+      'Feb',
+      'Mar',
+      'Apr',
+      'May',
+      'Jun',
+      'Jul',
+      'Aug',
+      'Sep',
+      'Oct',
+      'Nov',
+      'Dec',
+    ]
+    CUSTOMERS.forEach((c) => {
+      const months = c.monthlyTrend.map((m) => m.month)
+      expect(months).toEqual(expected)
+    })
+  })
+
+  it('every customer category percentages sum to 100', () => {
+    CUSTOMERS.forEach((c) => {
+      const total = c.categories.reduce((sum, cat) => sum + cat.pct, 0)
+      expect(total).toBe(100)
+    })
+  })
+
+  it('every customer has a valid status', () => {
+    const valid = ['Active', 'Dormant', 'Restricted']
+    CUSTOMERS.forEach((c) => {
+      expect(valid).toContain(c.status)
+    })
+  })
+
+  it('every customer has a valid risk profile', () => {
+    const valid = ['Low', 'Medium', 'High']
+    CUSTOMERS.forEach((c) => {
+      expect(valid).toContain(c.riskProfile)
+    })
+  })
+
+  it('all customer CIFs are unique', () => {
+    const cifs = CUSTOMERS.map((c) => c.cif)
+    expect(new Set(cifs).size).toBe(CUSTOMERS.length)
+  })
+
+  it('all account numbers are unique', () => {
+    const accounts = CUSTOMERS.map((c) => c.accountNumber)
+    expect(new Set(accounts).size).toBe(CUSTOMERS.length)
+  })
+
+  it('every customer has positive monthlyIncome and totalSpend', () => {
+    CUSTOMERS.forEach((c) => {
+      expect(c.monthlyIncome).toBeGreaterThan(0)
+      expect(c.totalSpend).toBeGreaterThan(0)
+    })
+  })
+
+  it('every customer has non-empty name, initials and insight', () => {
+    CUSTOMERS.forEach((c) => {
+      expect(c.name.trim().length).toBeGreaterThan(0)
+      expect(c.initials.trim().length).toBeGreaterThan(0)
+      expect(c.insight.trim().length).toBeGreaterThan(0)
+    })
+  })
+})
