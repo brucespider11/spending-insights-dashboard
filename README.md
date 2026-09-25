@@ -2,7 +2,7 @@
 
 A responsive analytics dashboard for exploring customer spending patterns, financial activity and key insights.
 
-Analysts can search a customer by CIF (Client Information File - identifier), account number, ID (South African Identity) number or Name then explore 12 months of spending trends, category breakdowns, merchant activity and key financial insights.
+Analysts can search a customer by CIF (Client Information File) number, account number, ID (South African Identity) number or Name then explore 12 months of spending trends, category breakdowns, merchant activity and key financial insights.
 
 The application includes seven realistic customer profiles and is fully self-contained, with no backend or database required.
 
@@ -26,7 +26,6 @@ Additional capabilities:
 - **Period filter** — Switch between 1, 3, 6, 9 or 12 months across charts and merchant views.
 - **7 mock customer profiles** — Explore realistic sample profiles across key retail banking segments.
 - **Fully responsive** — Optimised for mobile, tablet and desktop.
-- **Dark mode** — Automatically respects system settings, with a manual theme toggle.
 
 ---
 
@@ -229,9 +228,6 @@ The application only needs a small amount of shared state: the active customer, 
 ### Recharts over D3 or a lower-level library
 Recharts provides flexible, React-friendly chart components that integrate cleanly with the application. It offers the right balance of customisation and simplicity without the added complexity of a lower-level library such as D3.
 
-### `darkMode: 'class'` with localStorage persistence
-Dark mode is controlled using a `dark` class on the root HTML element, with the user’s preference saved between sessions. This gives the application reliable theme control and helps prevent visual flicker during page load.
-
 ### Vendor chunk splitting
 The Vite build separates React, Recharts and Lucide into dedicated vendor chunks. This improves browser caching, so returning users only download application code that has changed instead of reloading large shared libraries.
 
@@ -248,7 +244,7 @@ The dashboard uses a fixed 12-month period from October 2025 to September 2026 a
 - **Period spend is approximated.** 
 Shorter periods are calculated from monthly weighting patterns rather than individual transaction records.
 - **No internationalisation.**
-The application uses ZAR, English and en-ZA date and number formatting.
+The application uses ZAR (South African Rand), English and en-ZA date and number formatting.
 
 ---
 
