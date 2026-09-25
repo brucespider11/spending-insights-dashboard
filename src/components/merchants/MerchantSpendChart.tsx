@@ -51,6 +51,14 @@ function CustomTooltip({ active, payload, label }: TooltipProps<number, string>)
             R {merchant.avgSpend.toLocaleString()}
           </span>
         </div>
+        {merchant.change !== 0 && (
+          <div className="flex justify-between gap-4">
+            <span className="text-[11px] text-gray-500 dark:text-gray-500">YoY change</span>
+            <span className={`text-[11px] font-semibold ${merchant.change > 0 ? 'text-rose-500' : 'text-emerald-500'}`}>
+              {merchant.change > 0 ? '+' : ''}{merchant.change.toFixed(1)}%
+            </span>
+          </div>
+        )}
       </div>
       <div className="mt-2 pt-2 border-t border-gray-100 dark:border-[#2D2C44]">
         <span
@@ -68,19 +76,39 @@ function formatAmount(v: number) {
   return `R ${v}`
 }
 
+function getBarColor(change: number) {
+  if (change > 0) return '#f43f5e'  // rose — spend up
+  if (change < 0) return '#10b981'  // emerald — spend down
+  return '#9ca3af'                  // gray — no change
+}
+
 export default function MerchantSpendChart({ merchants, periodLabel }: Props) {
-  const top8 = merchants.slice(0, 8)
+  const MAX_SHOWN = 8
+  const top8 = merchants.slice(0, MAX_SHOWN)
 
   return (
     <div className="card p-6">
-      <div className="flex items-center justify-between mb-6">
+      <div className="flex items-start justify-between gap-4 mb-4">
         <div>
           <h2 className="text-base font-semibold text-gray-800 dark:text-gray-200">
             Top merchants by spend
           </h2>
           <p className="text-xs text-gray-400 dark:text-gray-600 mt-0.5">
-            Ranked by spend · {periodLabel}
+            {merchants.length > MAX_SHOWN
+              ? `Top ${MAX_SHOWN} of ${merchants.length} merchants`
+              : `All ${merchants.length} merchants`}{' '}
+            · {periodLabel}
           </p>
+        </div>
+        <div className="flex items-center gap-4 flex-shrink-0">
+          <div className="flex items-center gap-1.5">
+            <span className="w-2.5 h-2.5 rounded-sm bg-rose-400" />
+            <span className="text-[11px] text-gray-500 dark:text-gray-400">Spend up</span>
+          </div>
+          <div className="flex items-center gap-1.5">
+            <span className="w-2.5 h-2.5 rounded-sm bg-emerald-500" />
+            <span className="text-[11px] text-gray-500 dark:text-gray-400">Spend down</span>
+          </div>
         </div>
       </div>
 
@@ -132,7 +160,7 @@ export default function MerchantSpendChart({ merchants, periodLabel }: Props) {
             />
             <Bar dataKey="displaySpend" radius={[0, 5, 5, 0]} maxBarSize={20}>
               {top8.map((entry, i) => (
-                <Cell key={i} fill={entry.categoryColor} />
+                <Cell key={i} fill={getBarColor(entry.change)} />
               ))}
             </Bar>
           </BarChart>

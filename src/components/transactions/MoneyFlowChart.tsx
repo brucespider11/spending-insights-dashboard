@@ -10,6 +10,7 @@ import {
   type TooltipProps,
 } from 'recharts'
 import type { CustomerProfile } from '@/data/customers'
+import PeriodFilter, { type TimePeriod, PERIOD_MONTHS } from '@/components/common/PeriodFilter'
 
 type Tab = 'all' | 'income' | 'expenses'
 const TABS: { key: Tab; label: string }[] = [
@@ -62,12 +63,21 @@ interface Props {
 
 export default function MoneyFlowChart({ customer }: Props) {
   const [tab, setTab] = useState<Tab>('all')
+  const [timePeriod, setTimePeriod] = useState<TimePeriod>('12M')
 
-  const monthlyData = customer.monthlyTrend.map((m) => ({
+  // Distribute annual income so December gets a 13th-cheque bonus (~25% extra),
+  // with all other months reduced slightly to keep the annual total unchanged.
+  const bonus = customer.monthlyIncome * 0.25
+  const baseMonthly = Math.round((customer.monthlyIncome * 12 - bonus) / 12)
+  const decMonthly = Math.round(baseMonthly + bonus)
+
+  const allMonthlyData = customer.monthlyTrend.map((m) => ({
     month: m.month,
-    in: customer.monthlyIncome,
+    in: m.month === 'Dec' ? decMonthly : baseMonthly,
     out: m.amount,
   }))
+
+  const monthlyData = allMonthlyData.slice(-PERIOD_MONTHS[timePeriod])
 
   return (
     <div className="card p-6 flex flex-col gap-5">
@@ -76,10 +86,14 @@ export default function MoneyFlowChart({ customer }: Props) {
           <h2 className="text-base font-semibold text-gray-800 dark:text-gray-200">
             Monthly Money Flow
           </h2>
-          <p className="text-xs text-gray-500 dark:text-gray-500 mt-0.5">Jan – Dec 2025</p>
+          <p className="text-xs text-gray-500 dark:text-gray-500 mt-0.5">
+            {({ '1M': 'Last month', '3M': 'Last 3 months', '6M': 'Last 6 months', '9M': 'Last 9 months', '12M': 'Last 12 months' } as Record<TimePeriod, string>)[timePeriod]}
+          </p>
         </div>
 
-        <div className="flex items-center gap-1 p-1 rounded-xl bg-gray-100 dark:bg-white/5">
+        <div className="flex items-center gap-2 flex-wrap">
+          <PeriodFilter value={timePeriod} onChange={setTimePeriod} />
+          <div className="flex items-center gap-1 p-1 rounded-xl bg-gray-100 dark:bg-white/5">
           {TABS.map((t) => (
             <button
               key={t.key}
@@ -93,6 +107,7 @@ export default function MoneyFlowChart({ customer }: Props) {
               {t.label}
             </button>
           ))}
+          </div>
         </div>
       </div>
 

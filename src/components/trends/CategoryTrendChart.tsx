@@ -130,7 +130,17 @@ export default function CategoryTrendChart({ customer }: Props) {
         })}
       </div>
 
-      <div className="h-64">
+      <div className="h-64 relative">
+        {hidden.size === series.length && series.length > 0 && (
+          <div className="absolute inset-0 z-10 flex flex-col items-center justify-center gap-2 bg-white/80 dark:bg-[#1C1B2E]/80 rounded-xl">
+            <p className="text-sm text-gray-400 dark:text-gray-600">No categories selected</p>
+            <button
+              onClick={() => setHidden(new Set())}
+              className="text-xs font-medium text-brand-600 dark:text-brand-400 hover:underline">
+              Show all
+            </button>
+          </div>
+        )}
         <ResponsiveContainer width="100%" height="100%">
           <LineChart data={categoryMonthly} margin={{ top: 4, right: 4, bottom: 0, left: -10 }}>
             <CartesianGrid

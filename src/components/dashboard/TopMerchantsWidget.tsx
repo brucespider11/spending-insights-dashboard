@@ -1,15 +1,16 @@
+import { useState } from 'react'
 import { ArrowRight, TrendingUp, TrendingDown, Minus } from 'lucide-react'
 import { Link } from 'react-router-dom'
 import { MERCHANT_DATA, getPeriodSpend } from '@/data/merchants'
 import type { CustomerProfile } from '@/data/customers'
-import { PERIOD_MONTHS, type TimePeriod } from '@/components/common/PeriodFilter'
+import PeriodFilter, { PERIOD_MONTHS, type TimePeriod } from '@/components/common/PeriodFilter'
 
 interface Props {
   customer: CustomerProfile
-  period?: TimePeriod
 }
 
-export default function TopMerchantsWidget({ customer, period = '12M' }: Props) {
+export default function TopMerchantsWidget({ customer }: Props) {
+  const [period, setPeriod] = useState<TimePeriod>('12M')
   const data = MERCHANT_DATA[customer.cif]
   if (!data) return null
 
@@ -18,7 +19,7 @@ export default function TopMerchantsWidget({ customer, period = '12M' }: Props) 
 
   return (
     <div className="card p-6">
-      <div className="flex items-center justify-between mb-5">
+      <div className="flex items-start justify-between gap-4 flex-wrap mb-5">
         <div>
           <h2 className="text-base font-semibold text-gray-800 dark:text-gray-200">
             Top merchants
@@ -27,12 +28,15 @@ export default function TopMerchantsWidget({ customer, period = '12M' }: Props) 
             Highest spend · last {nMonths} months
           </p>
         </div>
-        <Link
-          to="/merchants"
-          className="inline-flex items-center gap-1 text-xs font-medium text-brand-600 dark:text-brand-400 hover:text-brand-700 dark:hover:text-brand-300 transition-colors">
-          View all
-          <ArrowRight size={12} />
-        </Link>
+        <div className="flex items-center gap-3">
+          <PeriodFilter value={period} onChange={setPeriod} />
+          <Link
+            to="/merchants"
+            className="inline-flex items-center gap-1 text-xs font-medium text-brand-600 dark:text-brand-400 hover:text-brand-700 dark:hover:text-brand-300 transition-colors">
+            View all
+            <ArrowRight size={12} />
+          </Link>
+        </div>
       </div>
 
       <div className="grid grid-cols-2 xl:grid-cols-4 gap-3">

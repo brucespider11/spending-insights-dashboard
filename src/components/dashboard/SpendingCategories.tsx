@@ -1,9 +1,12 @@
 import { useState } from 'react'
+import { Link } from 'react-router-dom'
+import { ArrowRight } from 'lucide-react'
 import { PieChart, Pie, Cell, ResponsiveContainer } from 'recharts'
 
 interface CategoryItem {
   name: string
   color: string
+  amount?: number
   pct?: number // from customer data
   value?: number // legacy fallback
 }
@@ -31,9 +34,17 @@ export default function SpendingCategories({ categories }: Props) {
 
   return (
     <div className="card p-6 flex flex-col gap-4">
-      <h2 className="text-base font-semibold text-gray-800 dark:text-gray-200">
-        Spending Categories
-      </h2>
+      <div className="flex items-center justify-between">
+        <h2 className="text-base font-semibold text-gray-800 dark:text-gray-200">
+          Spending Categories
+        </h2>
+        <Link
+          to="/categories"
+          className="inline-flex items-center gap-1 text-xs font-medium text-brand-600 dark:text-brand-400 hover:text-brand-700 dark:hover:text-brand-300 transition-colors">
+          View all
+          <ArrowRight size={12} />
+        </Link>
+      </div>
 
       {/* Donut — centred */}
       <div className="relative w-44 h-44 mx-auto flex-shrink-0">
@@ -100,12 +111,19 @@ export default function SpendingCategories({ categories }: Props) {
               className="w-2.5 h-2.5 rounded-full flex-shrink-0"
               style={{ background: cat.color }}
             />
-            <span className="flex-1 text-sm text-gray-600 dark:text-gray-400 truncate">
+            <span className="flex-1 text-xs text-gray-600 dark:text-gray-400 truncate">
               {cat.name}
             </span>
-            <span className="text-sm font-semibold text-gray-700 dark:text-gray-300 flex-shrink-0 tabular-nums ml-2">
-              {cat.value}%
-            </span>
+            <div className="flex items-baseline gap-2 flex-shrink-0">
+              {cat.amount != null && (
+                <span className="text-xs font-semibold text-gray-800 dark:text-gray-200 tabular-nums">
+                  R {cat.amount.toLocaleString()}
+                </span>
+              )}
+              <span className="text-[10px] text-gray-400 dark:text-gray-600 tabular-nums w-8 text-right">
+                {cat.value}%
+              </span>
+            </div>
           </div>
         ))}
       </div>

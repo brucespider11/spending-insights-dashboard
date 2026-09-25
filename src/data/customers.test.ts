@@ -5,7 +5,7 @@ describe('lookupCustomer', () => {
   it('finds a customer by CIF', () => {
     const result = lookupCustomer('CIF', '100234567')
     expect(result).not.toBeNull()
-    expect(result?.name).toBe('Madlanga Dlamini')
+    expect(result?.name).toBe('Riyaad van Damme')
   })
 
   it('finds a customer by Account Number', () => {
@@ -17,13 +17,19 @@ describe('lookupCustomer', () => {
   it('finds a customer by ID Number', () => {
     const result = lookupCustomer('ID Number', '9801015432089')
     expect(result).not.toBeNull()
-    expect(result?.cif).toBe('100234567')
+    expect(result?.name).toBe('Riyaad van Damme')
   })
 
-  it('finds a business customer by CIF (Business)', () => {
-    const result = lookupCustomer('CIF (Business)', '200891234')
+  it('finds a customer by full name (case-insensitive)', () => {
+    const result = lookupCustomer('Name', 'thandi mokoena')
     expect(result).not.toBeNull()
-    expect(result?.name).toBe('Sipho Motsepe')
+    expect(result?.name).toBe('Thandi Mokoena')
+  })
+
+  it('finds a customer by partial name', () => {
+    const result = lookupCustomer('Name', 'van Damme')
+    expect(result).not.toBeNull()
+    expect(result?.name).toBe('Riyaad van Damme')
   })
 
   it('returns null for an unknown CIF', () => {

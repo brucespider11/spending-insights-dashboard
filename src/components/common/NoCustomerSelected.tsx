@@ -32,7 +32,7 @@ export default function NoCustomerSelected() {
         No customer selected
       </h2>
       <p className="text-sm text-gray-500 dark:text-gray-500 max-w-xs mb-8 leading-relaxed text-center">
-        Search for a customer by CIF, account number, or ID number — or load a demo profile below.
+        Search by CIF, account number, ID number, or name — or load a demo profile below.
       </p>
 
       <button
@@ -54,14 +54,14 @@ export default function NoCustomerSelected() {
               onClick={() => loadDemo(c.cif)}
               className="card p-5 text-left hover:shadow-md dark:hover:border-[#3D3C54] transition-all duration-200 group">
               {/* Avatar + name */}
-              <div className="flex items-center gap-3 mb-4">
+              <div className="flex items-start gap-3 mb-4">
                 <div
-                  className="w-10 h-10 rounded-xl flex items-center justify-center text-xs font-bold text-white flex-shrink-0"
+                  className="w-10 h-10 rounded-xl flex items-center justify-center text-xs font-bold text-white flex-shrink-0 mt-0.5"
                   style={{ background: c.segmentColor }}>
                   {c.initials}
                 </div>
                 <div className="min-w-0">
-                  <p className="text-sm font-semibold text-gray-800 dark:text-gray-200 truncate leading-tight group-hover:text-brand-600 dark:group-hover:text-brand-400 transition-colors">
+                  <p className="text-sm font-semibold text-gray-800 dark:text-gray-200 leading-tight group-hover:text-brand-600 dark:group-hover:text-brand-400 transition-colors">
                     {c.name}
                   </p>
                   <p className="text-xs text-gray-500 dark:text-gray-400 truncate mt-0.5">
@@ -70,7 +70,12 @@ export default function NoCustomerSelected() {
                   <p className="text-xs text-gray-500 dark:text-gray-400 truncate">
                     Acc {c.accountNumber}
                   </p>
-                  <p className="text-xs text-gray-400 dark:text-gray-500 truncate">{c.segment}</p>
+                  <p className="text-xs text-gray-500 dark:text-gray-400 font-mono truncate">
+                    ID {c.idNumber}
+                  </p>
+                  <p className="text-xs font-semibold truncate" style={{ color: c.segmentColor }}>
+                    {c.segment}
+                  </p>
                 </div>
               </div>
 

@@ -1,6 +1,6 @@
 import { useState, useMemo } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
-import { Search, ArrowUpRight, ArrowDownLeft, LayoutGrid } from 'lucide-react'
+import { Search, X, ArrowUpDown, ArrowUpRight, ArrowDownLeft, LayoutGrid } from 'lucide-react'
 import CategoryCard from '@/components/categories/CategoryCard'
 import { CATEGORIES, getPeriodAmount } from '@/data/categories'
 import type { Category } from '@/data/categories'
@@ -9,11 +9,27 @@ import { useCustomer } from '@/context/CustomerContext'
 import PeriodFilter, { type TimePeriod, PERIOD_MONTHS } from '@/components/common/PeriodFilter'
 
 type Filter = 'all' | 'expense' | 'income'
+type SortKey = 'default' | 'amount' | 'change' | 'transactions'
 
 const FILTERS: { key: Filter; label: string }[] = [
   { key: 'all', label: 'All' },
   { key: 'expense', label: 'Expenses' },
   { key: 'income', label: 'Income' },
+]
+
+const PERIOD_LABEL: Record<TimePeriod, string> = {
+  '1M': 'Last month',
+  '3M': 'Last 3 months',
+  '6M': 'Last 6 months',
+  '9M': 'Last 9 months',
+  '12M': 'Last 12 months',
+}
+
+const SORT_OPTIONS: { key: SortKey; label: string }[] = [
+  { key: 'default', label: 'Default order' },
+  { key: 'amount', label: 'By amount' },
+  { key: 'change', label: 'By change' },
+  { key: 'transactions', label: 'By transactions' },
 ]
 
 export default function CategoriesPage() {
@@ -22,6 +38,7 @@ export default function CategoriesPage() {
   const [filter, setFilter] = useState<Filter>('all')
   const [search, setSearch] = useState('')
   const [timePeriod, setTimePeriod] = useState<TimePeriod>('12M')
+  const [sortKey, setSortKey] = useState<SortKey>('default')
 
   const nMonths = PERIOD_MONTHS[timePeriod]
 
@@ -39,8 +56,14 @@ export default function CategoriesPage() {
     if (filter !== 'all') list = list.filter((c) => c.type === filter)
     if (search.trim())
       list = list.filter((c) => c.name.toLowerCase().includes(search.toLowerCase()))
+    if (sortKey === 'amount')
+      list = [...list].sort((a, b) => getPeriodAmount(b, nMonths) - getPeriodAmount(a, nMonths))
+    else if (sortKey === 'change')
+      list = [...list].sort((a, b) => b.change - a.change)
+    else if (sortKey === 'transactions')
+      list = [...list].sort((a, b) => b.transactions - a.transactions)
     return list
-  }, [filter, search, customerCategories])
+  }, [filter, search, customerCategories, sortKey, nMonths])
 
   if (!customer) return <NoCustomerSelected />
 
@@ -76,7 +99,7 @@ export default function CategoriesPage() {
             Categories
           </h1>
           <p className="text-sm text-gray-500 dark:text-gray-500 mt-1">
-            All spending and income categories tracked across your accounts.
+            {customer.name.split(' ')[0]}'s spending and income categories.
           </p>
         </div>
         <PeriodFilter value={timePeriod} onChange={setTimePeriod} />
@@ -108,6 +131,7 @@ export default function CategoriesPage() {
             <p className="text-lg font-bold text-gray-900 dark:text-white">
               R {periodTotalExpenses.toLocaleString()}
             </p>
+            <p className="text-[10px] text-gray-400 dark:text-gray-600">{PERIOD_LABEL[timePeriod]}</p>
           </div>
         </div>
 
@@ -120,6 +144,7 @@ export default function CategoriesPage() {
             <p className="text-lg font-bold text-gray-900 dark:text-white">
               R {periodTotalIncome.toLocaleString()}
             </p>
+            <p className="text-[10px] text-gray-400 dark:text-gray-600">{PERIOD_LABEL[timePeriod]}</p>
           </div>
         </div>
       </div>
@@ -166,7 +191,7 @@ export default function CategoriesPage() {
             placeholder="Search categories..."
             value={search}
             onChange={(e) => setSearch(e.target.value)}
-            className="w-full pl-8 pr-4 py-2 text-sm rounded-xl
+            className="w-full pl-8 pr-8 py-2 text-sm rounded-xl
                        bg-white dark:bg-[#1C1B2E]
                        border border-gray-200 dark:border-[#2D2C44]
                        text-gray-700 dark:text-gray-300
@@ -174,6 +199,31 @@ export default function CategoriesPage() {
                        focus:outline-none focus:ring-2 focus:ring-brand-500/30 focus:border-brand-400
                        transition-colors"
           />
+          {search && (
+            <button
+              onClick={() => setSearch('')}
+              className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 transition-colors">
+              <X size={13} />
+            </button>
+          )}
+        </div>
+
+        {/* Sort */}
+        <div className="relative flex-shrink-0">
+          <ArrowUpDown size={13} className="absolute left-2.5 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none" />
+          <select
+            value={sortKey}
+            onChange={(e) => setSortKey(e.target.value as SortKey)}
+            className="pl-7 pr-3 py-2 text-xs rounded-xl appearance-none cursor-pointer
+                       bg-white dark:bg-[#1C1B2E]
+                       border border-gray-200 dark:border-[#2D2C44]
+                       text-gray-700 dark:text-gray-300
+                       focus:outline-none focus:ring-2 focus:ring-brand-500/30 focus:border-brand-400
+                       transition-colors">
+            {SORT_OPTIONS.map((o) => (
+              <option key={o.key} value={o.key}>{o.label}</option>
+            ))}
+          </select>
         </div>
 
         {visible.length !== customerCategories.length && (
@@ -186,13 +236,14 @@ export default function CategoriesPage() {
       {/* Category grid */}
       {visible.length > 0 ? (
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
-          {visible.map((cat) => (
+          {visible.map((cat, i) => (
             <CategoryCard
               key={cat.id}
               category={cat}
               totalForType={totalForType(cat)}
               displayAmount={getPeriodAmount(cat, nMonths)}
-              onClick={() => navigate('/transactions')}
+              rank={sortKey !== 'default' ? i + 1 : undefined}
+              onClick={() => navigate(cat.type === 'expense' ? '/transactions' : '/spending-trends')}
             />
           ))}
         </div>
@@ -202,7 +253,15 @@ export default function CategoriesPage() {
           <p className="text-sm font-medium text-gray-500 dark:text-gray-500">
             No categories found
           </p>
-          <p className="text-xs text-gray-400 dark:text-gray-600">Try a different search term</p>
+          {search ? (
+            <button
+              onClick={() => setSearch('')}
+              className="text-xs font-medium text-brand-600 dark:text-brand-400 hover:underline">
+              Clear search
+            </button>
+          ) : (
+            <p className="text-xs text-gray-400 dark:text-gray-600">Try a different filter</p>
+          )}
         </div>
       )}
     </div>

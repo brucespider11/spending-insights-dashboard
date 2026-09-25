@@ -41,7 +41,17 @@ export default function TopMovers({ customer }: Props) {
         </p>
       </div>
 
-      {/* Tabs */}
+      {movers.length === 0 && (
+        <div className="flex flex-col items-center justify-center gap-2 py-10 text-center">
+          <p className="text-sm text-gray-400 dark:text-gray-600">No category changes detected</p>
+          <p className="text-xs text-gray-400 dark:text-gray-600">
+            All categories are consistent with last year
+          </p>
+        </div>
+      )}
+
+      {/* Tabs + list — only shown when there are movers */}
+      {movers.length > 0 && (<>
       <div className="flex items-center gap-1 p-1 rounded-xl bg-gray-100 dark:bg-white/5 self-start">
         {(['increases', 'decreases'] as Tab[]).map((t) => (
           <button
@@ -122,6 +132,7 @@ export default function TopMovers({ customer }: Props) {
           })
         )}
       </div>
+      </>)}
     </div>
   )
 }

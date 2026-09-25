@@ -94,6 +94,12 @@ export default function CustomerDashboard({ customer, onBack }: Props) {
                       {customer.accountNumber}
                     </span>
                   </span>
+                  <span className="text-xs text-gray-500 dark:text-gray-500">
+                    ID:{' '}
+                    <span className="font-mono font-semibold text-gray-700 dark:text-gray-300">
+                      {customer.idNumber}
+                    </span>
+                  </span>
                   <span className="flex items-center gap-1 text-xs text-gray-500 dark:text-gray-500">
                     <MapPin size={11} />
                     {customer.location}

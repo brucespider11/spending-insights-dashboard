@@ -6,6 +6,7 @@ import {
   YAxis,
   CartesianGrid,
   Tooltip,
+  ReferenceLine,
   ResponsiveContainer,
   type TooltipProps,
 } from 'recharts'
@@ -100,6 +101,14 @@ export default function SpendingTrendChart({ customer }: Props) {
   const rawData = period === 'monthly' ? monthlyData : quarterlyData
   const data = period === 'monthly' ? rawData.slice(-PERIOD_MONTHS[timePeriod]) : rawData
   const xKey = period === 'monthly' ? 'month' : 'period'
+
+  // Peak within the current view — only meaningful in monthly mode
+  const peakLabel =
+    period === 'monthly' && data.length > 0
+      ? (data as Array<{ month: string; thisYear: number }>).reduce((a, b) =>
+          a.thisYear > b.thisYear ? a : b
+        ).month
+      : null
   const gradId = 'trendGradThis'
   const gradIdLY = 'trendGradLast'
 
@@ -202,6 +211,15 @@ export default function SpendingTrendChart({ customer }: Props) {
               content={<CustomTooltip showLastYear={showLastYear} />}
               cursor={{ stroke: '#7c3aed', strokeWidth: 1, strokeDasharray: '4 4' }}
             />
+            {peakLabel && (
+              <ReferenceLine
+                x={peakLabel}
+                stroke="#f59e0b"
+                strokeWidth={1.5}
+                strokeDasharray="4 3"
+                label={{ value: 'Peak', position: 'insideTopRight', fontSize: 9, fill: '#f59e0b' }}
+              />
+            )}
             {showLastYear && (
               <Area
                 type="monotone"

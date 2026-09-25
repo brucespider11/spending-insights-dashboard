@@ -1,6 +1,8 @@
 # Customer Spending Insights Dashboard
 
-A browser-based analytics dashboard built for customer analysts. Look up any customer by CIF, account number, or ID number, then work through seven focused views — analytics overview, spending trends, transaction flow, category breakdown, merchant rankings, and a structured insights panel that surfaces risk, opportunity, alert, and pattern signals above the charts.
+A responsive, web-based analytics dashboard for analysing customer spending patterns, insights, and financial activity.
+
+Look up a customer by CIF, account number, then work through seven focused views — analytics overview, spending trends, transaction flow, category breakdown, merchant rankings, and a structured insights panel that surfaces risk, opportunity, alert, and pattern signals above the charts.
 
 Ships with seven realistic customer profiles spanning Youth, Young Professional, Family, Professional, Business Owner, Lifestyle, and Retired segments. Every profile carries authentic spend data, category breakdowns, and analyst-grade insights tailored to their segment.
 
@@ -22,7 +24,7 @@ Fully self-contained — no backend, no database, no external services. Clone th
 
 Additional capabilities:
 - **Global search** — search customers by CIF, account number, ID number, or name; navigate to any page
-- **Period filter** — 1 M / 3 M / 6 M / 9 M / 12 M available on all chart and merchant pages
+- **Period filter** — 1 M / 3 M / 6 M / 9 M / 12 M available on all chart and merchant pages (M = Month)
 - **7 mock customer profiles** — covering Youth, Young Professional, Family, Professional, Business Owner, Lifestyle, and Retired segments
 - **Fully responsive** — works on mobile, tablet, and desktop
 - **Dark mode** — system-aware with manual override

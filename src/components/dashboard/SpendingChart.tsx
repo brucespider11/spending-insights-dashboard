@@ -7,7 +7,6 @@ import {
   CartesianGrid,
   Tooltip,
   ResponsiveContainer,
-  Legend,
   type TooltipProps,
 } from 'recharts'
 import type { CustomerProfile } from '@/data/customers'
@@ -82,13 +81,30 @@ export default function SpendingChart({ customer }: Props) {
             Income vs Spend
           </h2>
           <p className="text-xs text-gray-400 dark:text-gray-600 mt-0.5">
-            Savings rate:{' '}
-            <span className="font-semibold text-emerald-600 dark:text-emerald-400">
-              {savingsRate}%
+            {savingsRate >= 0 ? 'Savings rate' : 'Deficit rate'}:{' '}
+            <span
+              className={`font-semibold ${
+                savingsRate >= 0
+                  ? 'text-emerald-600 dark:text-emerald-400'
+                  : 'text-rose-500 dark:text-rose-400'
+              }`}>
+              {Math.abs(savingsRate)}%
             </span>
           </p>
         </div>
         <PeriodFilter value={period} onChange={setPeriod} />
+      </div>
+
+      {/* Custom legend */}
+      <div className="flex items-center gap-5">
+        <div className="flex items-center gap-1.5">
+          <span className="w-3 h-3 rounded-sm bg-emerald-500 flex-shrink-0" />
+          <span className="text-xs text-gray-500 dark:text-gray-400">Income</span>
+        </div>
+        <div className="flex items-center gap-1.5">
+          <span className="w-3 h-3 rounded-sm bg-brand-600 flex-shrink-0" />
+          <span className="text-xs text-gray-500 dark:text-gray-400">Spend</span>
+        </div>
       </div>
 
       <div className="h-64">
@@ -143,13 +159,6 @@ export default function SpendingChart({ customer }: Props) {
               fill="url(#spendGrad)"
               dot={false}
               activeDot={{ r: 4, fill: '#7c3aed', strokeWidth: 2, stroke: '#fff' }}
-            />
-            <Legend
-              iconType="circle"
-              iconSize={8}
-              formatter={(value) => (
-                <span className="text-xs text-gray-500 dark:text-gray-400 capitalize">{value}</span>
-              )}
             />
           </AreaChart>
         </ResponsiveContainer>

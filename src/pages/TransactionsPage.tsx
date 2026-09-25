@@ -1,5 +1,5 @@
 import { Link } from 'react-router-dom'
-import { ArrowDownLeft, ArrowUpRight, Scale, Hash, Calendar } from 'lucide-react'
+import { ArrowDownLeft, ArrowUpRight, Scale, Hash } from 'lucide-react'
 import MoneyFlowChart from '@/components/transactions/MoneyFlowChart'
 import CategoryBreakdown from '@/components/transactions/CategoryBreakdown'
 import NoCustomerSelected from '@/components/common/NoCustomerSelected'
@@ -12,6 +12,7 @@ export default function TransactionsPage() {
   const totalIn = customer.monthlyIncome * 12
   const totalOut = customer.totalSpend
   const net = totalIn - totalOut
+  const netPositive = net >= 0
 
   const SUMMARY = [
     {
@@ -24,18 +25,26 @@ export default function TransactionsPage() {
     {
       label: 'Money Out',
       value: `R ${totalOut.toLocaleString()}`,
-      change: `+${customer.spendChange}%`,
-      positive: false,
+      change: `${customer.spendChange > 0 ? '+' : ''}${customer.spendChange}%`,
+      positive: customer.spendChange < 0,
       icon: <ArrowUpRight size={18} />,
       iconBg: 'bg-rose-100 dark:bg-rose-500/15',
       iconColor: 'text-rose-600 dark:text-rose-400',
     },
     {
       label: 'Net Balance',
-      value: `R ${net.toLocaleString()}`,
+      value: `${netPositive ? '' : '−'}R ${Math.abs(net).toLocaleString()}`,
+      sub: netPositive ? 'Surplus this year' : 'Deficit this year',
+      valueColor: netPositive
+        ? 'text-emerald-600 dark:text-emerald-400'
+        : 'text-rose-600 dark:text-rose-400',
       icon: <Scale size={18} />,
-      iconBg: 'bg-brand-100 dark:bg-brand-500/15',
-      iconColor: 'text-brand-600 dark:text-brand-400',
+      iconBg: netPositive
+        ? 'bg-emerald-100 dark:bg-emerald-500/15'
+        : 'bg-rose-100 dark:bg-rose-500/15',
+      iconColor: netPositive
+        ? 'text-emerald-600 dark:text-emerald-400'
+        : 'text-rose-600 dark:text-rose-400',
     },
     {
       label: 'Transactions',
@@ -58,22 +67,13 @@ export default function TransactionsPage() {
       </nav>
 
       {/* Page header */}
-      <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-4">
-        <div>
-          <h1 className="text-xl sm:text-2xl font-bold text-gray-900 dark:text-white">
-            Transactions
-          </h1>
-          <p className="text-sm text-gray-500 dark:text-gray-500 mt-1">
-            Money in and out across all accounts — Jan to Dec 2025.
-          </p>
-        </div>
-        <div className="flex items-center gap-2">
-          <button className="btn-ghost text-xs sm:text-sm">
-            <Calendar size={13} />
-            <span className="hidden sm:inline">Last 12 months</span>
-            <span className="sm:hidden">12m</span>
-          </button>
-        </div>
+      <div>
+        <h1 className="text-xl sm:text-2xl font-bold text-gray-900 dark:text-white">
+          Transactions
+        </h1>
+        <p className="text-sm text-gray-500 dark:text-gray-500 mt-1">
+          {customer.name.split(' ')[0]}'s money in and out across all accounts.
+        </p>
       </div>
 
       {/* Summary KPI cards */}
@@ -86,9 +86,12 @@ export default function TransactionsPage() {
             </div>
             <div className="min-w-0 flex-1">
               <p className="text-xs text-gray-500 dark:text-gray-500">{s.label}</p>
-              <p className="text-xl font-bold text-gray-900 dark:text-white tracking-tight truncate">
+              <p className={`text-xl font-bold tracking-tight truncate ${'valueColor' in s && s.valueColor ? s.valueColor : 'text-gray-900 dark:text-white'}`}>
                 {s.value}
               </p>
+              {'sub' in s && s.sub && (
+                <p className="text-[10px] text-gray-400 dark:text-gray-600 truncate">{s.sub}</p>
+              )}
             </div>
             {'change' in s && s.change && (
               <span

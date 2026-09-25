@@ -54,7 +54,7 @@ export default function MerchantInsightsPage() {
     {
       label: 'Highest spend',
       value: topBySpend.name,
-      sub: `R ${topBySpend.displaySpend.toLocaleString()}`,
+      sub: `R ${topBySpend.displaySpend.toLocaleString()} · ${periodLabel}`,
       icon: <Trophy size={17} />,
       iconBg: 'bg-amber-100 dark:bg-amber-500/15',
       iconColor: 'text-amber-600 dark:text-amber-400',
@@ -62,7 +62,7 @@ export default function MerchantInsightsPage() {
     {
       label: 'Most visited',
       value: topByVisits.name,
-      sub: `${topByVisits.visitCount} visits`,
+      sub: `${topByVisits.visitCount} visits · ${periodLabel}`,
       icon: <Navigation size={17} />,
       iconBg: 'bg-emerald-100 dark:bg-emerald-500/15',
       iconColor: 'text-emerald-600 dark:text-emerald-400',

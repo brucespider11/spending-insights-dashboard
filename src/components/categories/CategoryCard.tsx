@@ -17,7 +17,7 @@ import {
   TrendingUp,
   TrendingDown,
 } from 'lucide-react'
-import { LineChart, Line, ResponsiveContainer } from 'recharts'
+import { LineChart, Line, Tooltip, ResponsiveContainer, type TooltipProps } from 'recharts'
 import type { Category, CategoryIconName } from '@/data/categories'
 
 const ICONS: Record<CategoryIconName, React.ReactNode> = {
@@ -39,14 +39,26 @@ const ICONS: Record<CategoryIconName, React.ReactNode> = {
   'trending-up': <TrendingUp size={18} />,
 }
 
+function SparkTooltip({ active, payload }: TooltipProps<number, string>) {
+  if (!active || !payload?.length) return null
+  return (
+    <div className="bg-white dark:bg-[#1C1B2E] border border-gray-100 dark:border-[#2D2C44] rounded-lg shadow-lg px-2 py-1 pointer-events-none">
+      <p className="text-xs font-semibold text-gray-800 dark:text-gray-200">
+        R {(payload[0].value as number).toLocaleString()}
+      </p>
+    </div>
+  )
+}
+
 interface Props {
   category: Category
   totalForType: number
   displayAmount?: number
+  rank?: number
   onClick?: () => void
 }
 
-export default function CategoryCard({ category, totalForType, displayAmount, onClick }: Props) {
+export default function CategoryCard({ category, totalForType, displayAmount, rank, onClick }: Props) {
   const amount = displayAmount ?? category.amount
   const pct = ((amount / totalForType) * 100).toFixed(1)
   const isPositive = category.change >= 0
@@ -58,16 +70,21 @@ export default function CategoryCard({ category, totalForType, displayAmount, on
       {/* Icon + badge */}
       <div className="flex items-start justify-between">
         <div
-          className="w-10 h-10 rounded-xl flex items-center justify-center flex-shrink-0 transition-transform duration-200 group-hover:scale-105"
+          className="relative w-10 h-10 rounded-xl flex items-center justify-center flex-shrink-0 transition-transform duration-200 group-hover:scale-105"
           style={{ background: `${category.color}20` }}>
           <span style={{ color: category.color }}>{ICONS[category.iconName]}</span>
+          {rank !== undefined && (
+            <span className="absolute -top-1.5 -right-1.5 w-4 h-4 rounded-full bg-gray-700 dark:bg-gray-300 text-white dark:text-gray-800 text-[9px] font-bold flex items-center justify-center">
+              {rank}
+            </span>
+          )}
         </div>
         <span
           className={`flex items-center gap-0.5 text-xs font-semibold px-2 py-1 rounded-full
             ${
               isPositive
-                ? 'bg-emerald-50 dark:bg-emerald-500/10 text-emerald-600 dark:text-emerald-400'
-                : 'bg-rose-50 dark:bg-rose-500/10 text-rose-600 dark:text-rose-400'
+                ? 'bg-rose-50 dark:bg-rose-500/10 text-rose-600 dark:text-rose-400'
+                : 'bg-emerald-50 dark:bg-emerald-500/10 text-emerald-600 dark:text-emerald-400'
             }`}>
           {isPositive ? <TrendingUp size={10} /> : <TrendingDown size={10} />}
           {isPositive ? '+' : ''}
@@ -81,8 +98,16 @@ export default function CategoryCard({ category, totalForType, displayAmount, on
         <p className="text-xl font-bold text-gray-900 dark:text-white tracking-tight">
           R {amount.toLocaleString()}
         </p>
-        <p className="text-xs text-gray-400 dark:text-gray-600 mt-0.5">
+        <p className="text-xs text-gray-400 dark:text-gray-600 mt-0.5 flex items-center gap-1.5 flex-wrap">
           {category.transactions} transactions
+          <span
+            className={`text-[10px] font-semibold px-1.5 py-0.5 rounded-full ${
+              category.type === 'expense'
+                ? 'bg-rose-50 dark:bg-rose-500/10 text-rose-500 dark:text-rose-400'
+                : 'bg-emerald-50 dark:bg-emerald-500/10 text-emerald-600 dark:text-emerald-400'
+            }`}>
+            {category.type === 'expense' ? 'Expense' : 'Income'}
+          </span>
         </p>
       </div>
 
@@ -91,6 +116,10 @@ export default function CategoryCard({ category, totalForType, displayAmount, on
         <div className="flex-1 h-10 -ml-1">
           <ResponsiveContainer width="100%" height="100%">
             <LineChart data={category.trend}>
+              <Tooltip
+                content={<SparkTooltip />}
+                cursor={{ stroke: 'currentColor', strokeOpacity: 0.1 }}
+              />
               <Line
                 type="monotone"
                 dataKey="v"
