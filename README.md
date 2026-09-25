@@ -1,8 +1,8 @@
 # Customer Spending Insights Dashboard
 
-A responsive, web-based analytics dashboard for analysing customer spending patterns, insights, and financial activity.
+A responsive, web-based analytics dashboard for analysing customer spending patterns, insights and financial activity.
 
-Analysts can search a customer by CIF (Client Information File - identifier), account number, ID (South African Identity) number, or Name, then explore 12 months of spending trends, category breakdowns, merchant activity, and key financial insights.
+Analysts can search a customer by CIF (Client Information File - identifier), account number, ID (South African Identity) number or Name, then explore 12 months of spending trends, category breakdowns, merchant activity and key financial insights.
 
 The application includes seven realistic customer profiles and is fully self-contained, with no backend or database required.
 
@@ -12,20 +12,20 @@ The application includes seven realistic customer profiles and is fully self-con
 
 | Page | What it does |
 |---|---|
-| **Customer Overview** | Get a quick view of the customer’s spending profile, 12-month trends, top categories, and key financial insights. |
-| **Analytics** | Review key spending metrics, income vs. spend trends, category breakdowns, notable insights, and top merchants. |
+| **Customer Overview** | Get a quick view of the customer’s spending profile, 12-month trends, top categories and key financial insights. |
+| **Analytics** | Review key spending metrics, income vs. spend trends, category breakdowns, notable insights and top merchants. |
 | **Spending Trends** | Explore how spending changes over time with period filters and category comparisons. |
-| **Transactions** | Understand money movement through income and spending charts, category breakdowns, and year-on-year comparisons. |
-| **Categories** | Explore expense and income categories, compare spending across periods, view trends, and sort categories by value. |
-| **Merchant Insights** | See where customers spend most, rank merchants by spend, and filter results by period, category, or merchant. |
+| **Transactions** | Understand money movement through income and spending charts, category breakdowns and year-on-year comparisons. |
+| **Categories** | Explore expense and income categories, compare spending across periods, view trends and sort categories by value. |
+| **Merchant Insights** | See where customers spend most, rank merchants by spend and filter results by period, category or merchant. |
 | **Settings** | Switch between light and dark mode, with the selected preference remembered between sessions, persisted to `localStorage` |
 
 Additional capabilities:
 
-- **Global search** — Find customers by CIF, account number, ID number, or name, and navigate directly from the header
-- **Period filter** — Switch between 1, 3, 6, 9, or 12 months across charts and merchant views.
+- **Global search** — Find customers by CIF, account number, ID number or name and navigate directly from the header
+- **Period filter** — Switch between 1, 3, 6, 9 or 12 months across charts and merchant views.
 - **7 mock customer profiles** — Explore realistic sample profiles across key retail banking segments.
-- **Fully responsive** — Optimised for mobile, tablet, and desktop.
+- **Fully responsive** — Optimised for mobile, tablet and desktop.
 - **Dark mode** — Automatically respects system settings, with a manual theme toggle.
 
 ---
@@ -140,7 +140,7 @@ There are no E2E tests. The data layer helpers are the highest-value unit-test t
 
 ## Docker
 
-The Dockerfile uses a two-stage build: Node 20 Alpine builds the application, and Nginx Alpine serves the production files. 
+The Dockerfile uses a two-stage build: Node 20 Alpine builds the application and Nginx Alpine serves the production files. 
 Nginx is configured to fall back to `index.html` for all routes, ensuring React Router navigation works correctly.
 
 
@@ -218,13 +218,13 @@ The `@` path alias resolves to `src/` throughout the codebase (e.g. `@/data/cust
 ## Architecture decisions
 
 ### Mock data over a backend API
-All customer, transaction, category, and merchant data is kept in `src/data/`, making the application fully self-contained and easy to run without external services. Access to that data is handled through typed interfaces and helper functions such as `lookupCustomer`, `getPeriodSpend`, and `getPeriodAmount`, so the UI never works with raw data directly and can be connected to a real API later with minimal changes.
+All customer, transaction, category and merchant data is kept in `src/data/`, making the application fully self-contained and easy to run without external services. Access to that data is handled through typed interfaces and helper functions such as `lookupCustomer`, `getPeriodSpend` and `getPeriodAmount`, so the UI never works with raw data directly and can be connected to a real API later with minimal changes.
 
 ### Period filtering via monthly weight distributions
 The mock data stores annual totals rather than individual transaction records. Each category and merchant carries a `MONTHLY_PATTERNS` array (12 weights summing to 1.0) that models realistic seasonal spend for that category (e.g. Retail peaks in Oct–Dec, Travel peaks in Jun–Aug). Selecting "Last 3 months" slices the final 3 weights and scales the annual total accordingly. This produces coherent, period-consistent numbers without a transaction database.
 
 ### React Context API over a state library
-The application only needs a small amount of shared state: the active customer, sidebar state, and theme preference. React Context handles these cleanly without introducing the additional complexity of Redux or Zustand.
+The application only needs a small amount of shared state: the active customer, sidebar state and theme preference. React Context handles these cleanly without introducing the additional complexity of Redux or Zustand.
 
 ### Recharts over D3 or a lower-level library
 Recharts provides flexible, React-friendly chart components that integrate cleanly with the application. It offers the right balance of customisation and simplicity without the added complexity of a lower-level library such as D3.
@@ -233,7 +233,7 @@ Recharts provides flexible, React-friendly chart components that integrate clean
 Dark mode is controlled using a `dark` class on the root HTML element, with the user’s preference saved between sessions. This gives the application reliable theme control and helps prevent visual flicker during page load.
 
 ### Vendor chunk splitting
-The Vite build separates React, Recharts, and Lucide into dedicated vendor chunks. This improves browser caching, so returning users only download application code that has changed instead of reloading large shared libraries.
+The Vite build separates React, Recharts and Lucide into dedicated vendor chunks. This improves browser caching, so returning users only download application code that has changed instead of reloading large shared libraries.
 
 ---
 
@@ -269,7 +269,7 @@ The application uses ZAR, English and en-ZA date and number formatting.
 
 ## Demo profiles
 
-Use any identifier below in the search bar, or click a customer card on the home screen:
+Use any identifier below in the search bar or click a customer card on the home screen:
 
 | Name | CIF | Account Number | Segment | Risk |
 |---|---|---|---|---|
