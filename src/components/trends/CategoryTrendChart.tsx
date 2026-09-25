@@ -79,7 +79,7 @@ export default function CategoryTrendChart({ customer }: Props) {
     const weight = totalSpend > 0 ? m.amount / totalSpend : 1 / 12
     const row: Record<string, number | string> = { month: m.month }
     topCategories.forEach((cat) => {
-      row[cat.name.toLowerCase()] = Math.round(cat.amount * weight)
+      row[cat.name.toLowerCase()] = Math.round(cat.amount * (nMonths / 12) * weight)
     })
     return row
   })

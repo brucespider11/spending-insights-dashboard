@@ -14,9 +14,7 @@ function SparkTooltip({
   const display = format === 'currency' ? `R ${d.v.toLocaleString()}` : d.v.toLocaleString()
   return (
     <div className="bg-white dark:bg-[#1C1B2E] border border-gray-100 dark:border-[#2D2C44] rounded-lg shadow-lg px-2.5 py-1.5 pointer-events-none">
-      {d.label && (
-        <p className="text-[10px] text-gray-400 dark:text-gray-500 mb-0.5">{d.label}</p>
-      )}
+      {d.label && <p className="text-[10px] text-gray-400 dark:text-gray-500 mb-0.5">{d.label}</p>}
       <p className="text-xs font-semibold text-gray-800 dark:text-gray-200">{display}</p>
     </div>
   )
@@ -50,7 +48,8 @@ export default function KPICard({
   const isPositive = (change ?? 0) >= 0
 
   const inner = (
-    <div className={`card p-5 flex flex-col gap-3 ${to ? 'hover:shadow-md dark:hover:border-[#3D3C54] transition-shadow cursor-pointer' : ''}`}>
+    <div
+      className={`card p-5 flex flex-col gap-3 ${to ? 'hover:shadow-md dark:hover:border-[#3D3C54] transition-shadow cursor-pointer' : ''}`}>
       <div className="flex items-start justify-between">
         <div
           className={`w-10 h-10 rounded-xl flex items-center justify-center flex-shrink-0 ${iconBg}`}>
@@ -73,7 +72,8 @@ export default function KPICard({
 
       <div>
         <p className="text-xs text-gray-500 dark:text-gray-500 mb-1">{label}</p>
-        <p className={`text-2xl font-bold tracking-tight ${accent ?? 'text-gray-900 dark:text-white'}`}>
+        <p
+          className={`text-2xl font-bold tracking-tight ${accent ?? 'text-gray-900 dark:text-white'}`}>
           {value}
         </p>
       </div>
@@ -101,5 +101,11 @@ export default function KPICard({
     </div>
   )
 
-  return to ? <Link to={to} className="block">{inner}</Link> : inner
+  return to ? (
+    <Link to={to} className="block">
+      {inner}
+    </Link>
+  ) : (
+    inner
+  )
 }

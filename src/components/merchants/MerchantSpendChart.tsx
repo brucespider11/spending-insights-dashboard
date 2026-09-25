@@ -54,8 +54,10 @@ function CustomTooltip({ active, payload, label }: TooltipProps<number, string>)
         {merchant.change !== 0 && (
           <div className="flex justify-between gap-4">
             <span className="text-[11px] text-gray-500 dark:text-gray-500">YoY change</span>
-            <span className={`text-[11px] font-semibold ${merchant.change > 0 ? 'text-rose-500' : 'text-emerald-500'}`}>
-              {merchant.change > 0 ? '+' : ''}{merchant.change.toFixed(1)}%
+            <span
+              className={`text-[11px] font-semibold ${merchant.change > 0 ? 'text-rose-500' : 'text-emerald-500'}`}>
+              {merchant.change > 0 ? '+' : ''}
+              {merchant.change.toFixed(1)}%
             </span>
           </div>
         )}
@@ -77,9 +79,9 @@ function formatAmount(v: number) {
 }
 
 function getBarColor(change: number) {
-  if (change > 0) return '#f43f5e'  // rose — spend up
-  if (change < 0) return '#10b981'  // emerald — spend down
-  return '#9ca3af'                  // gray — no change
+  if (change > 0) return '#f43f5e' // rose — spend up
+  if (change < 0) return '#10b981' // emerald — spend down
+  return '#9ca3af' // gray — no change
 }
 
 export default function MerchantSpendChart({ merchants, periodLabel }: Props) {

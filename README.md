@@ -105,7 +105,7 @@ All data is statically defined in `src/data/` and the application makes no exter
 | `lint` | `npm run lint` | Run oxlint across `src/` |
 | `format` | `npm run format` | Auto-fix formatting with Prettier |
 | `format:check` | `npm run format:check` | Check formatting without writing (used in CI) |
-| `validate` | `npm run validate` | Full pipeline: format check → lint → typecheck → test → build |
+| `validate` | `npm run validate` | Full pipeline: format (auto-fix) → lint → typecheck → test → build |
 | `docker` | `npm run docker` | Build and run the Docker container on :8080 (removes any existing container first) |
 
 ---

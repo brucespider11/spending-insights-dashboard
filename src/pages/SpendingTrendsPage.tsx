@@ -97,7 +97,8 @@ export default function SpendingTrendsPage() {
             </div>
             <div className="min-w-0">
               <p className="text-[11px] text-gray-500 dark:text-gray-500 truncate">{s.label}</p>
-              <p className={`text-base sm:text-lg font-bold leading-tight truncate ${'valueColor' in s && s.valueColor ? s.valueColor : 'text-gray-900 dark:text-white'}`}>
+              <p
+                className={`text-base sm:text-lg font-bold leading-tight truncate ${'valueColor' in s && s.valueColor ? s.valueColor : 'text-gray-900 dark:text-white'}`}>
                 {s.value}
               </p>
               <p className="text-[10px] text-gray-400 dark:text-gray-600 truncate">{s.sub}</p>

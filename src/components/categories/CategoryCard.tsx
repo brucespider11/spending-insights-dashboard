@@ -41,10 +41,12 @@ const ICONS: Record<CategoryIconName, React.ReactNode> = {
 
 function SparkTooltip({ active, payload }: TooltipProps<number, string>) {
   if (!active || !payload?.length) return null
+  const value = payload[0].value
+  if (value == null) return null
   return (
     <div className="bg-white dark:bg-[#1C1B2E] border border-gray-100 dark:border-[#2D2C44] rounded-lg shadow-lg px-2 py-1 pointer-events-none">
       <p className="text-xs font-semibold text-gray-800 dark:text-gray-200">
-        R {(payload[0].value as number).toLocaleString()}
+        R {value.toLocaleString()}
       </p>
     </div>
   )
@@ -58,7 +60,13 @@ interface Props {
   onClick?: () => void
 }
 
-export default function CategoryCard({ category, totalForType, displayAmount, rank, onClick }: Props) {
+export default function CategoryCard({
+  category,
+  totalForType,
+  displayAmount,
+  rank,
+  onClick,
+}: Props) {
   const amount = displayAmount ?? category.amount
   const pct = ((amount / totalForType) * 100).toFixed(1)
   const isPositive = category.change >= 0

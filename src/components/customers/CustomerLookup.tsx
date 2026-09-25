@@ -74,6 +74,16 @@ export default function CustomerLookup({ onFound }: Props) {
     handleSearch(customer.cif, 'CIF')
   }
 
+  const rule = FORMAT_RULES[idType]
+  const expectedLen = rule?.length
+  const isFormatError = !!expectedLen && value.length > 0 && value.length !== expectedLen
+  const digitHint = expectedLen && value.length > 0 ? `${value.length}/${expectedLen}` : null
+  const clearValue = () => {
+    setValue('')
+    setNotFound(false)
+    setNameResults([])
+  }
+
   // Full-page spinner only for manual form searches — quick lookups show inline button spinner
   if (loading && !loadingCif) {
     return (
@@ -95,15 +105,7 @@ export default function CustomerLookup({ onFound }: Props) {
         {/* Header */}
         <div className="text-center mb-8">
           <div className="w-14 h-14 rounded-2xl bg-brand-600 flex items-center justify-center mx-auto mb-4">
-            <svg width="28" height="28" viewBox="0 0 28 28" fill="none">
-              <path
-                d="M7 7L14 21L21 7"
-                stroke="white"
-                strokeWidth="2.5"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-              />
-            </svg>
+            <span className="text-white text-sm font-bold tracking-tight">CS</span>
           </div>
           <h1 className="text-2xl font-bold text-gray-900 dark:text-white">Customer Lookup</h1>
           <p className="text-sm text-gray-500 dark:text-gray-500 mt-1.5 max-w-xs mx-auto">
@@ -125,77 +127,62 @@ export default function CustomerLookup({ onFound }: Props) {
           />
 
           {/* Value input */}
-          {(() => {
-            const rule = FORMAT_RULES[idType]
-            const expectedLen = rule?.length
-            const isFormatError = !!expectedLen && value.length > 0 && value.length !== expectedLen
-            const digitHint = expectedLen && value.length > 0 ? `${value.length}/${expectedLen}` : null
+          <div className="relative">
+            <span className="absolute top-2 left-4 text-xs font-semibold tracking-wide text-gray-400 dark:text-gray-500 pointer-events-none">
+              Customer Identifier
+            </span>
 
-            const clearValue = () => {
-              setValue('')
-              setNotFound(false)
-              setNameResults([])
-            }
-
-            return (
-              <div className="relative">
-                <span className="absolute top-2 left-4 text-xs font-semibold tracking-wide text-gray-400 dark:text-gray-500 pointer-events-none">
-                  Customer Identifier
-                </span>
-
-                {/* Right-side controls: digit counter + clear button */}
-                {value && (
-                  <div className="absolute top-2 right-3 flex items-center gap-1.5 z-10">
-                    {digitHint && (
-                      <span
-                        className={`text-[11px] font-semibold tabular-nums ${
-                          isFormatError
-                            ? 'text-rose-500 dark:text-rose-400'
-                            : 'text-emerald-600 dark:text-emerald-400'
-                        }`}>
-                        {digitHint}
-                      </span>
-                    )}
-                    <button
-                      type="button"
-                      onClick={clearValue}
-                      className="p-0.5 rounded-md text-gray-300 dark:text-gray-600 hover:text-gray-500 dark:hover:text-gray-400 hover:bg-gray-100 dark:hover:bg-white/10 transition-colors"
-                      aria-label="Clear">
-                      <X size={13} />
-                    </button>
-                  </div>
-                )}
-
-                <input
-                  type="text"
-                  value={value}
-                  onChange={(e) => {
-                    const v = e.target.value
-                    setValue(v)
-                    setNotFound(false)
-                    if (idType === 'Name') {
-                      setNameResults(v.trim().length >= 2 ? searchCustomersByName(v) : [])
-                    }
-                  }}
-                  onKeyDown={(e) => e.key === 'Enter' && idType !== 'Name' && handleSearch()}
-                  placeholder={PLACEHOLDERS[idType]}
-                  className={`
-                    w-full px-4 pt-6 pb-3 rounded-xl text-sm font-medium
-                    border-2 bg-white dark:bg-[#1C1B2E]
-                    text-gray-800 dark:text-gray-200
-                    placeholder:text-gray-300 dark:placeholder:text-gray-600
-                    focus:outline-none transition-colors
-                    ${value ? 'pr-20' : ''}
-                    ${
+            {/* Right-side controls: digit counter + clear button */}
+            {value && (
+              <div className="absolute top-2 right-3 flex items-center gap-1.5 z-10">
+                {digitHint && (
+                  <span
+                    className={`text-[11px] font-semibold tabular-nums ${
                       isFormatError
-                        ? 'border-rose-300 dark:border-rose-500/50 focus:border-rose-400 dark:focus:border-rose-500'
-                        : 'border-gray-200 dark:border-[#2D2C44] hover:border-gray-300 dark:hover:border-[#3D3C54] focus:border-brand-500'
-                    }
-                  `}
-                />
+                        ? 'text-rose-500 dark:text-rose-400'
+                        : 'text-emerald-600 dark:text-emerald-400'
+                    }`}>
+                    {digitHint}
+                  </span>
+                )}
+                <button
+                  type="button"
+                  onClick={clearValue}
+                  className="p-0.5 rounded-md text-gray-300 dark:text-gray-600 hover:text-gray-500 dark:hover:text-gray-400 hover:bg-gray-100 dark:hover:bg-white/10 transition-colors"
+                  aria-label="Clear">
+                  <X size={13} />
+                </button>
               </div>
-            )
-          })()}
+            )}
+
+            <input
+              type="text"
+              value={value}
+              onChange={(e) => {
+                const v = e.target.value
+                setValue(v)
+                setNotFound(false)
+                if (idType === 'Name') {
+                  setNameResults(v.trim().length >= 2 ? searchCustomersByName(v) : [])
+                }
+              }}
+              onKeyDown={(e) => e.key === 'Enter' && idType !== 'Name' && handleSearch()}
+              placeholder={PLACEHOLDERS[idType]}
+              className={`
+                w-full px-4 pt-6 pb-3 rounded-xl text-sm font-medium
+                border-2 bg-white dark:bg-[#1C1B2E]
+                text-gray-800 dark:text-gray-200
+                placeholder:text-gray-300 dark:placeholder:text-gray-600
+                focus:outline-none transition-colors
+                ${value ? 'pr-20' : ''}
+                ${
+                  isFormatError
+                    ? 'border-rose-300 dark:border-rose-500/50 focus:border-rose-400 dark:focus:border-rose-500'
+                    : 'border-gray-200 dark:border-[#2D2C44] hover:border-gray-300 dark:hover:border-[#3D3C54] focus:border-brand-500'
+                }
+              `}
+            />
+          </div>
 
           {/* Name search — live results list */}
           {idType === 'Name' && value.trim().length >= 2 && (
@@ -236,7 +223,9 @@ export default function CustomerLookup({ onFound }: Props) {
                           CIF {c.cif} · {c.accountNumber}
                         </p>
                       </div>
-                      <span className="text-xs font-semibold flex-shrink-0" style={{ color: c.segmentColor }}>
+                      <span
+                        className="text-xs font-semibold flex-shrink-0"
+                        style={{ color: c.segmentColor }}>
                         {c.segment}
                       </span>
                     </button>
@@ -300,8 +289,12 @@ export default function CustomerLookup({ onFound }: Props) {
                       {c.name}
                     </p>
                     <p className="text-xs text-gray-400 dark:text-gray-600">CIF {c.cif}</p>
-                    <p className="text-xs text-gray-400 dark:text-gray-600">Acc {c.accountNumber}</p>
-                    <p className="text-xs text-gray-400 dark:text-gray-600 font-mono">ID {c.idNumber}</p>
+                    <p className="text-xs text-gray-400 dark:text-gray-600">
+                      Acc {c.accountNumber}
+                    </p>
+                    <p className="text-xs text-gray-400 dark:text-gray-600 font-mono">
+                      ID {c.idNumber}
+                    </p>
                     <p className="text-xs font-semibold" style={{ color: c.segmentColor }}>
                       {c.segment}
                     </p>

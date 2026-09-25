@@ -69,7 +69,8 @@ export default function InsightsPanel({ insights }: Props) {
                 key={type}
                 className={`inline-flex items-center gap-1 text-[10px] font-semibold px-2 py-0.5 rounded-full ${cfg.badge}`}>
                 <Icon size={9} />
-                {count} {cfg.label}{count > 1 ? 's' : ''}
+                {count} {cfg.label}
+                {count > 1 ? 's' : ''}
               </span>
             )
           })}
@@ -77,13 +78,13 @@ export default function InsightsPanel({ insights }: Props) {
       </div>
 
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-        {insights.map((insight, i) => {
+        {insights.map((insight) => {
           const cfg = TYPE_CONFIG[insight.type]
           const Icon = cfg.icon
           const dest = TYPE_DESTINATION[insight.type]
           return (
             <Link
-              key={i}
+              key={insight.title}
               to={dest}
               className={`border-l-4 rounded-xl p-4 flex flex-col gap-2 group
                 hover:shadow-md transition-shadow duration-200

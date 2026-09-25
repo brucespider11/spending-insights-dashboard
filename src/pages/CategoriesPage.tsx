@@ -58,8 +58,7 @@ export default function CategoriesPage() {
       list = list.filter((c) => c.name.toLowerCase().includes(search.toLowerCase()))
     if (sortKey === 'amount')
       list = [...list].sort((a, b) => getPeriodAmount(b, nMonths) - getPeriodAmount(a, nMonths))
-    else if (sortKey === 'change')
-      list = [...list].sort((a, b) => b.change - a.change)
+    else if (sortKey === 'change') list = [...list].sort((a, b) => b.change - a.change)
     else if (sortKey === 'transactions')
       list = [...list].sort((a, b) => b.transactions - a.transactions)
     return list
@@ -131,7 +130,9 @@ export default function CategoriesPage() {
             <p className="text-lg font-bold text-gray-900 dark:text-white">
               R {periodTotalExpenses.toLocaleString()}
             </p>
-            <p className="text-[10px] text-gray-400 dark:text-gray-600">{PERIOD_LABEL[timePeriod]}</p>
+            <p className="text-[10px] text-gray-400 dark:text-gray-600">
+              {PERIOD_LABEL[timePeriod]}
+            </p>
           </div>
         </div>
 
@@ -144,7 +145,9 @@ export default function CategoriesPage() {
             <p className="text-lg font-bold text-gray-900 dark:text-white">
               R {periodTotalIncome.toLocaleString()}
             </p>
-            <p className="text-[10px] text-gray-400 dark:text-gray-600">{PERIOD_LABEL[timePeriod]}</p>
+            <p className="text-[10px] text-gray-400 dark:text-gray-600">
+              {PERIOD_LABEL[timePeriod]}
+            </p>
           </div>
         </div>
       </div>
@@ -210,7 +213,10 @@ export default function CategoriesPage() {
 
         {/* Sort */}
         <div className="relative flex-shrink-0">
-          <ArrowUpDown size={13} className="absolute left-2.5 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none" />
+          <ArrowUpDown
+            size={13}
+            className="absolute left-2.5 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none"
+          />
           <select
             value={sortKey}
             onChange={(e) => setSortKey(e.target.value as SortKey)}
@@ -221,7 +227,9 @@ export default function CategoriesPage() {
                        focus:outline-none focus:ring-2 focus:ring-brand-500/30 focus:border-brand-400
                        transition-colors">
             {SORT_OPTIONS.map((o) => (
-              <option key={o.key} value={o.key}>{o.label}</option>
+              <option key={o.key} value={o.key}>
+                {o.label}
+              </option>
             ))}
           </select>
         </div>
@@ -243,7 +251,9 @@ export default function CategoriesPage() {
               totalForType={totalForType(cat)}
               displayAmount={getPeriodAmount(cat, nMonths)}
               rank={sortKey !== 'default' ? i + 1 : undefined}
-              onClick={() => navigate(cat.type === 'expense' ? '/transactions' : '/spending-trends')}
+              onClick={() =>
+                navigate(cat.type === 'expense' ? '/transactions' : '/spending-trends')
+              }
             />
           ))}
         </div>

@@ -86,7 +86,8 @@ export default function TransactionsPage() {
             </div>
             <div className="min-w-0 flex-1">
               <p className="text-xs text-gray-500 dark:text-gray-500">{s.label}</p>
-              <p className={`text-xl font-bold tracking-tight truncate ${'valueColor' in s && s.valueColor ? s.valueColor : 'text-gray-900 dark:text-white'}`}>
+              <p
+                className={`text-xl font-bold tracking-tight truncate ${'valueColor' in s && s.valueColor ? s.valueColor : 'text-gray-900 dark:text-white'}`}>
                 {s.value}
               </p>
               {'sub' in s && s.sub && (

@@ -65,15 +65,13 @@ export default function MoneyFlowChart({ customer }: Props) {
   const [tab, setTab] = useState<Tab>('all')
   const [timePeriod, setTimePeriod] = useState<TimePeriod>('12M')
 
-  // Distribute annual income so December gets a 13th-cheque bonus (~25% extra),
-  // with all other months reduced slightly to keep the annual total unchanged.
-  const bonus = customer.monthlyIncome * 0.25
-  const baseMonthly = Math.round((customer.monthlyIncome * 12 - bonus) / 12)
-  const decMonthly = Math.round(baseMonthly + bonus)
+  // December gets a 13th-cheque bonus (~25% of monthly income) on top of regular pay.
+  // All other months show the stated monthlyIncome so charts stay consistent with KPI cards.
+  const bonus = Math.round(customer.monthlyIncome * 0.25)
 
   const allMonthlyData = customer.monthlyTrend.map((m) => ({
     month: m.month,
-    in: m.month === 'Dec' ? decMonthly : baseMonthly,
+    in: m.month === 'Dec' ? customer.monthlyIncome + bonus : customer.monthlyIncome,
     out: m.amount,
   }))
 
@@ -87,26 +85,36 @@ export default function MoneyFlowChart({ customer }: Props) {
             Monthly Money Flow
           </h2>
           <p className="text-xs text-gray-500 dark:text-gray-500 mt-0.5">
-            {({ '1M': 'Last month', '3M': 'Last 3 months', '6M': 'Last 6 months', '9M': 'Last 9 months', '12M': 'Last 12 months' } as Record<TimePeriod, string>)[timePeriod]}
+            {
+              (
+                {
+                  '1M': 'Last month',
+                  '3M': 'Last 3 months',
+                  '6M': 'Last 6 months',
+                  '9M': 'Last 9 months',
+                  '12M': 'Last 12 months',
+                } as Record<TimePeriod, string>
+              )[timePeriod]
+            }
           </p>
         </div>
 
         <div className="flex items-center gap-2 flex-wrap">
           <PeriodFilter value={timePeriod} onChange={setTimePeriod} />
           <div className="flex items-center gap-1 p-1 rounded-xl bg-gray-100 dark:bg-white/5">
-          {TABS.map((t) => (
-            <button
-              key={t.key}
-              onClick={() => setTab(t.key)}
-              className={`px-3 py-1.5 rounded-lg text-xs font-medium transition-colors
+            {TABS.map((t) => (
+              <button
+                key={t.key}
+                onClick={() => setTab(t.key)}
+                className={`px-3 py-1.5 rounded-lg text-xs font-medium transition-colors
                 ${
                   tab === t.key
                     ? 'bg-white dark:bg-[#1C1B2E] text-gray-900 dark:text-white shadow-sm'
                     : 'text-gray-500 dark:text-gray-500 hover:text-gray-700 dark:hover:text-gray-300'
                 }`}>
-              {t.label}
-            </button>
-          ))}
+                {t.label}
+              </button>
+            ))}
           </div>
         </div>
       </div>
