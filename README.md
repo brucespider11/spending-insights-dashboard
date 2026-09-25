@@ -1,8 +1,8 @@
 # Customer Spending Insights Dashboard
 
-A responsive, web-based analytics dashboard for analysing customer spending patterns, insights and financial activity.
+A responsive analytics dashboard for exploring customer spending patterns, financial activity and key insights.
 
-Analysts can search a customer by CIF (Client Information File - identifier), account number, ID (South African Identity) number or Name, then explore 12 months of spending trends, category breakdowns, merchant activity and key financial insights.
+Analysts can search a customer by CIF (Client Information File - identifier), account number, ID (South African Identity) number or Name then explore 12 months of spending trends, category breakdowns, merchant activity and key financial insights.
 
 The application includes seven realistic customer profiles and is fully self-contained, with no backend or database required.
 
@@ -18,7 +18,7 @@ The application includes seven realistic customer profiles and is fully self-con
 | **Transactions** | Understand money movement through income and spending charts, category breakdowns and year-on-year comparisons. |
 | **Categories** | Explore expense and income categories, compare spending across periods, view trends and sort categories by value. |
 | **Merchant Insights** | See where customers spend most, rank merchants by spend and filter results by period, category or merchant. |
-| **Settings** | Switch between light and dark mode, with the selected preference remembered between sessions, persisted to `localStorage` |
+| **Settings** | Switch between light and dark mode, with the selected preference remembered between sessions and persisted to `localStorage` |
 
 Additional capabilities:
 
@@ -289,7 +289,7 @@ Use any identifier below in the search bar or click a customer card on the home 
 Port 5173 is already in use. Stop the conflicting process or run `npm run dev -- --port 5174`.
 
 **`docker: Cannot connect to the Docker daemon`**
-REnsure Docker Desktop or Rancher Desktop is running and the container engine has started before retrying.
+Ensure Docker Desktop or Rancher Desktop is running and the container engine has started before retrying.
 
 **`npm run validate` fails on format check**
 Run `npm run format` to apply formatting fixes, then run `npm run validate`. again.

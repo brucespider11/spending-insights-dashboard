@@ -56,12 +56,17 @@ function SidebarContent({ forceExpanded = false }: { forceExpanded?: boolean }) 
       <div
         className={`flex items-center h-[60px] px-4 flex-shrink-0 ${isExpanded ? 'gap-2.5' : 'justify-center'}`}>
         <div className="w-8 h-8 rounded-xl bg-brand-600 flex items-center justify-center flex-shrink-0">
-          <span className="text-white text-[11px] font-bold tracking-tight">CS</span>
+          <span className="text-white text-[10px] font-bold tracking-tight">CSI</span>
         </div>
         {isExpanded && (
-          <span className="font-bold text-lg tracking-tight text-gray-900 dark:text-white flex-1">
-            Insights<span className="text-brand-600">.</span>
-          </span>
+          <div className="flex-1 min-w-0">
+            <p className="text-[10px] font-semibold leading-none text-gray-500 dark:text-gray-500 truncate">
+              Customer Spending
+            </p>
+            <p className="text-sm font-bold leading-tight tracking-tight text-gray-900 dark:text-white truncate">
+              Insights<span className="text-brand-600">.</span>
+            </p>
+          </div>
         )}
         {forceExpanded && mobileOpen && (
           <button

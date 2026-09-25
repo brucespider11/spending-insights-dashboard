@@ -104,9 +104,15 @@ export default function CustomerLookup({ onFound }: Props) {
       <div className="w-full max-w-md">
         {/* Header */}
         <div className="text-center mb-8">
-          <div className="w-14 h-14 rounded-2xl bg-brand-600 flex items-center justify-center mx-auto mb-4">
-            <span className="text-white text-sm font-bold tracking-tight">CS</span>
+          <div className="w-14 h-14 rounded-2xl bg-brand-600 flex items-center justify-center mx-auto mb-2">
+            <span className="text-white text-sm font-bold tracking-tight">CSI</span>
           </div>
+          <p className="text-xs font-semibold leading-none text-gray-500 dark:text-gray-500 mb-0.5">
+            Customer Spending
+          </p>
+          <p className="text-lg font-bold leading-tight tracking-tight text-gray-900 dark:text-white mb-4">
+            Insights<span className="text-brand-600">.</span>
+          </p>
           <h1 className="text-2xl font-bold text-gray-900 dark:text-white">Customer Lookup</h1>
           <p className="text-sm text-gray-500 dark:text-gray-500 mt-1.5 max-w-xs mx-auto">
             Search by CIF, account number, ID number, or name to view spending insights.
