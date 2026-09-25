@@ -62,8 +62,11 @@ describe('CUSTOMERS data integrity', () => {
     })
   })
 
-  it('monthly trend months run Jan through Dec', () => {
+  it('monthly trend months run Oct through Sep (rolling 12-month window)', () => {
     const expected = [
+      'Oct',
+      'Nov',
+      'Dec',
       'Jan',
       'Feb',
       'Mar',
@@ -73,9 +76,6 @@ describe('CUSTOMERS data integrity', () => {
       'Jul',
       'Aug',
       'Sep',
-      'Oct',
-      'Nov',
-      'Dec',
     ]
     CUSTOMERS.forEach((c) => {
       const months = c.monthlyTrend.map((m) => m.month)

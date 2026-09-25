@@ -1,8 +1,8 @@
 # Customer Spending Insights Dashboard
 
-A responsive web-based Customer Spending Insights dashboards that helps analysts quickly understand how a customer earns, spends and where their money goes.
+A responsive, web-based analytics dashboard for analysing customer spending patterns, insights, and financial activity.
 
-Analysts can search by CIF (Client Information File - identifier), account number, ID (South African Identity) number, or name, then explore 12 months of spending trends, category breakdowns, merchant activity, and key financial insights.
+Analysts can search a customer by CIF (Client Information File - identifier), account number, ID (South African Identity) number, or Name, then explore 12 months of spending trends, category breakdowns, merchant activity, and key financial insights.
 
 The application includes seven realistic customer profiles and is fully self-contained, with no backend or database required.
 
@@ -70,8 +70,8 @@ docker --version
 
 ```bash
 # 1. Clone the repo
-git clone <repo-url>
-cd customer-spending-insights-dashboard
+git clone https://github.com/brucespider11/spending-insights-dashboard.git
+cd spending-insights-dashboard
 
 # 2. Install dependencies
 npm install
