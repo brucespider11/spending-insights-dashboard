@@ -2,7 +2,7 @@
 
 A responsive analytics dashboard for exploring customer spending patterns, financial activity and key insights.
 
-Analysts can search a customer by CIF (Client Information File) number, account number, ID (South African Identity) number or Name then explore 12 months of spending trends, category breakdowns, merchant activity and key financial insights.
+Users can search for a customer by CIF (Client Information File) number, account number, ID (South African Identity) number or name then explore 12 months of spending trends, category breakdowns, merchant activity and key financial insights.
 
 The application includes seven realistic customer profiles and is fully self-contained, with no backend or database required.
 
@@ -18,11 +18,11 @@ The application includes seven realistic customer profiles and is fully self-con
 | **Transactions** | Understand money movement through income and spending charts, category breakdowns and year-on-year comparisons. |
 | **Categories** | Explore expense and income categories, compare spending across periods, view trends and sort categories by value. |
 | **Merchant Insights** | See where customers spend most, rank merchants by spend and filter results by period, category or merchant. |
-| **Settings** | Switch between light and dark mode, with the selected preference remembered between sessions and persisted to `localStorage` |
+| **Settings** | Switch between light and dark mode, with the selected preference remembered between sessions and persisted to `localStorage`. |
 
 Additional capabilities:
 
-- **Global search** — Find customers by CIF, account number, ID number or name and navigate directly from the header
+- **Global search** — Find customers by CIF, account number, ID number or name and navigate directly from the header.
 - **Period filter** — Switch between 1, 3, 6, 9 or 12 months across charts and merchant views.
 - **7 mock customer profiles** — Explore realistic sample profiles across key retail banking segments.
 - **Fully responsive** — Optimised for mobile, tablet and desktop.
@@ -41,6 +41,8 @@ Additional capabilities:
 | Icons | Lucide React | 0.446 |
 | State | React Context API | — |
 | Testing | Vitest + Testing Library | 4 / 16 |
+| Test environment | jsdom | 29 |
+| User interactions | @testing-library/user-event | 14 |
 | Linting | oxlint | 1.85 |
 | Formatting | Prettier | 3.9 |
 | Container | Docker (node:20-alpine → nginx:alpine) | — |
@@ -131,6 +133,9 @@ Test files:
 | `src/data/customers.test.ts` | `lookupCustomer` and `searchCustomersByName` helpers |
 | `src/data/categories.test.ts` | `getPeriodAmount` period-scaling logic |
 | `src/data/merchants.test.ts` | `getPeriodSpend` seasonal weight calculations |
+| `src/hooks/useCustomerSearch.test.ts` | Customer search hook behaviour |
+| `src/hooks/useMediaQuery.test.ts` | Breakpoint detection logic |
+| `src/context/ThemeContext.test.tsx` | Theme context state and localStorage persistence |
 | `src/components/common/PeriodFilter.test.tsx` | PeriodFilter render and interaction |
 
 There are no E2E tests. The data layer helpers are the highest-value unit-test targets because they underpin every chart's numbers.
@@ -142,10 +147,11 @@ There are no E2E tests. The data layer helpers are the highest-value unit-test t
 The Dockerfile uses a two-stage build: Node 20 Alpine builds the application and Nginx Alpine serves the production files. 
 Nginx is configured to fall back to `index.html` for all routes, ensuring React Router navigation works correctly.
 
-
 **Prerequisites:** [Rancher Desktop](https://rancherdesktop.io/) or Docker Desktop must be running.
 
-> On macOS, open **Rancher Desktop** from Applications and wait for the engine to start before running any `docker` commands.
+> **macOS** — Open **Rancher Desktop** or **Docker Desktop** from Applications and wait for the engine to start before running any `docker` commands.
+>
+> **Windows** — Open **Docker Desktop** or **Rancher Desktop** from the Start menu and wait for the icon in the system tray to show the engine is running before running any `docker` commands.
 
 ```bash
 # One-command build and run (recommended)
@@ -178,9 +184,9 @@ customer-spending-insights-dashboard/
 ├── src/
 │   ├── components/
 │   │   ├── categories/       # CategoryCard (sparkline, rank badge, type pill)
-│   │   ├── common/           # GlobalSearch, NoCustomerSelected, PeriodFilter
-│   │   ├── customers/        # CustomerLookup, CustomerDashboard
-│   │   ├── dashboard/        # KPICard, SpendingChart, SpendingCategories, TopMerchantsWidget
+│   │   ├── common/           # ErrorBoundary, GlobalSearch, NoCustomerSelected, PeriodFilter
+│   │   ├── customers/        # CustomerLookup, CustomerDashboard, IdentifierTypeSelect
+│   │   ├── dashboard/        # InsightsPanel, KPICard, SpendingChart, SpendingCategories, TopMerchantsWidget
 │   │   ├── layout/           # Header, Sidebar, MainLayout
 │   │   ├── merchants/        # MerchantSpendChart, MerchantTable
 │   │   ├── transactions/     # CategoryBreakdown, MoneyFlowChart
@@ -193,6 +199,12 @@ customer-spending-insights-dashboard/
 │   │   ├── categories.ts     # 16 categories, monthly weight patterns, getPeriodAmount()
 │   │   ├── customers.ts      # 7 mock profiles, lookupCustomer(), searchCustomersByName()
 │   │   └── merchants.ts      # 12 merchants per customer, MONTHLY_PATTERNS, getPeriodSpend()
+│   ├── hooks/
+│   │   ├── useCustomerSearch.ts  # Customer search and lookup logic
+│   │   └── useMediaQuery.ts      # Responsive breakpoint detection
+│   ├── lib/
+│   │   ├── badgeStyles.ts    # Shared badge / pill styling utilities
+│   │   └── chartColors.ts    # Shared Recharts colour palette
 │   ├── pages/
 │   │   ├── DashboardPage.tsx
 │   │   ├── CustomerOverviewPage.tsx
@@ -200,7 +212,8 @@ customer-spending-insights-dashboard/
 │   │   ├── TransactionsPage.tsx
 │   │   ├── CategoriesPage.tsx
 │   │   ├── MerchantInsightsPage.tsx
-│   │   └── SettingsPage.tsx
+│   │   ├── SettingsPage.tsx
+│   │   └── NotFoundPage.tsx
 │   └── test/
 │       └── setup.ts          # @testing-library/jest-dom matchers
 ├── Dockerfile
@@ -227,6 +240,12 @@ The application only needs a small amount of shared state: the active customer, 
 
 ### Recharts over D3 or a lower-level library
 Recharts provides flexible, React-friendly chart components that integrate cleanly with the application. It offers the right balance of customisation and simplicity without the added complexity of a lower-level library such as D3.
+
+### Custom hooks layer
+Search and responsive-breakpoint logic are extracted into `src/hooks/` rather than embedded in components. This keeps components focused on rendering, makes the logic independently testable, and allows the same behaviour to be reused across multiple pages without duplication.
+
+### Shared lib utilities
+`src/lib/` holds two thin modules — `badgeStyles.ts` for badge and pill class mappings and `chartColors.ts` for the Recharts colour palette. Centralising these ensures visual consistency across all charts and category badges; updating a colour or style in one place propagates everywhere automatically.
 
 ### Vendor chunk splitting
 The Vite build separates React, Recharts and Lucide into dedicated vendor chunks. This improves browser caching, so returning users only download application code that has changed instead of reloading large shared libraries.
@@ -257,7 +276,7 @@ The application uses ZAR (South African Rand), English and en-ZA date and number
 | **Search** | Replace client-side name matching with a server-side full-text search endpoint for large customer bases |
 | **Accessibility** | Audit with axe-core; add `aria-label` to all icon-only buttons and chart containers |
 | **E2E tests** | Add Playwright or Cypress smoke tests covering the customer lookup → dashboard → merchant insights flow |
-| **Error boundaries** | Wrap page-level components with React error boundaries so a bad API response doesn't crash the whole app |
+| **Error boundaries** | `ErrorBoundary` component exists; extend coverage to wrap individual chart widgets so a rendering failure isolates to that tile |
 | **Performance** | The current bundle is small; at production scale, virtualise the merchant table (react-virtual) and paginate API results |
 | **CI/CD** | `npm run validate` maps directly to a GitHub Actions pipeline step: format check → lint → typecheck → test → build → Docker push |
 
@@ -267,15 +286,15 @@ The application uses ZAR (South African Rand), English and en-ZA date and number
 
 Use any identifier below in the search bar or click a customer card on the home screen:
 
-| Name | CIF | Account Number | Segment | Risk |
-|---|---|---|---|---|
-| Riyaad van Damme | 100234567 | 1234567890 | Young Professional | Medium |
-| Thandi Mokoena | 100567890 | 0987654321 | Family | Low |
-| Sipho Motsepe | 100891234 | 1357924680 | Business Owner | High |
-| Lwazi Dube | 100345678 | 2345678901 | Youth | Low |
-| Vikesh Govender | 100456789 | 3456789012 | Professional | Medium |
-| Kobus van der Berg | 100678901 | 4567890123 | Lifestyle | High |
-| Anna-Marie Botha | 100789012 | 5678901234 | Retired | Low |
+| Name | CIF | Account Number | ID Number | Segment | Risk |
+|---|---|---|---|---|---|
+| Riyaad van Damme | 100234567 | 1234567890 | 9801015432089 | Young Professional | Medium |
+| Thandi Mokoena | 100567890 | 0987654321 | 7502245678234 | Family | Low |
+| Sipho Motsepe | 100891234 | 1357924680 | 6804128901234 | Business Owner | High |
+| Lwazi Dube | 100345678 | 2345678901 | 6203105432110 | Youth | Low |
+| Vikesh Govender | 100456789 | 3456789012 | 9805156234087 | Professional | Medium |
+| Kobus van der Berg | 100678901 | 4567890123 | 8507235678123 | Lifestyle | High |
+| Anna-Marie Botha | 100789012 | 5678901234 | 7812015987654 | Retired | Low |
 
 ---
 
@@ -288,7 +307,7 @@ Port 5173 is already in use. Stop the conflicting process or run `npm run dev --
 Ensure Docker Desktop or Rancher Desktop is running and the container engine has started before retrying.
 
 **`npm run validate` fails on format check**
-Run `npm run format` to apply formatting fixes, then run `npm run validate`. again.
+Run `npm run format` to apply formatting fixes, then run `npm run validate` again.
 
 **TypeScript path alias `@/...` not resolving in your editor**
 Make sure your editor is using the workspace TypeScript configuration. 
