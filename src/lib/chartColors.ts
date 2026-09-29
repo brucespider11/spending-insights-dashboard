@@ -3,4 +3,5 @@
 export const CHART = {
   brand: '#7c3aed', // brand-600 — spend series, primary accent
   income: '#10b981', // emerald-500 — income series, positive values
+  expense: '#f43f5e', // rose-500 — expense series, negative values
 } as const

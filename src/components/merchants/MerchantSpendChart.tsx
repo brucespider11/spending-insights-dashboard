@@ -10,6 +10,7 @@ import {
   type TooltipProps,
 } from 'recharts'
 import type { MerchantDisplay } from '@/data/merchants'
+import { CHART } from '@/lib/chartColors'
 
 interface Props {
   merchants: MerchantDisplay[]
@@ -79,8 +80,8 @@ function formatAmount(v: number) {
 }
 
 function getBarColor(change: number) {
-  if (change > 0) return '#f43f5e' // rose — spend up
-  if (change < 0) return '#10b981' // emerald — spend down
+  if (change > 0) return CHART.expense // rose — spend up
+  if (change < 0) return CHART.income // emerald — spend down
   return '#9ca3af' // gray — no change
 }
 

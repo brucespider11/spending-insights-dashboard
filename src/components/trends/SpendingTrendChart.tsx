@@ -12,6 +12,7 @@ import {
 } from 'recharts'
 import PeriodFilter, { type TimePeriod, PERIOD_MONTHS } from '@/components/common/PeriodFilter'
 import type { CustomerProfile } from '@/data/customers'
+import { CHART } from '@/lib/chartColors'
 
 type Period = 'monthly' | 'quarterly'
 
@@ -109,8 +110,8 @@ export default function SpendingTrendChart({ customer }: Props) {
           a.thisYear > b.thisYear ? a : b
         ).month
       : null
-  const gradId = 'trendGradThis'
-  const gradIdLY = 'trendGradLast'
+  const gradId = `trend-this-${customer.cif}`
+  const gradIdLY = `trend-last-${customer.cif}`
 
   return (
     <div className="card p-6 flex flex-col gap-5">
@@ -181,8 +182,8 @@ export default function SpendingTrendChart({ customer }: Props) {
           <AreaChart data={data} margin={{ top: 4, right: 4, bottom: 0, left: -10 }}>
             <defs>
               <linearGradient id={gradId} x1="0" y1="0" x2="0" y2="1">
-                <stop offset="5%" stopColor="#7c3aed" stopOpacity={0.22} />
-                <stop offset="95%" stopColor="#7c3aed" stopOpacity={0} />
+                <stop offset="5%" stopColor={CHART.brand} stopOpacity={0.22} />
+                <stop offset="95%" stopColor={CHART.brand} stopOpacity={0} />
               </linearGradient>
               <linearGradient id={gradIdLY} x1="0" y1="0" x2="0" y2="1">
                 <stop offset="5%" stopColor="#9ca3af" stopOpacity={0.12} />
@@ -209,7 +210,7 @@ export default function SpendingTrendChart({ customer }: Props) {
             />
             <Tooltip
               content={<CustomTooltip showLastYear={showLastYear} />}
-              cursor={{ stroke: '#7c3aed', strokeWidth: 1, strokeDasharray: '4 4' }}
+              cursor={{ stroke: CHART.brand, strokeWidth: 1, strokeDasharray: '4 4' }}
             />
             {peakLabel && (
               <ReferenceLine
@@ -235,11 +236,11 @@ export default function SpendingTrendChart({ customer }: Props) {
             <Area
               type="monotone"
               dataKey="thisYear"
-              stroke="#7c3aed"
+              stroke={CHART.brand}
               strokeWidth={2}
               fill={`url(#${gradId})`}
               dot={false}
-              activeDot={{ r: 4, fill: '#7c3aed', strokeWidth: 2, stroke: '#fff' }}
+              activeDot={{ r: 4, fill: CHART.brand, strokeWidth: 2, stroke: '#fff' }}
             />
           </AreaChart>
         </ResponsiveContainer>

@@ -72,9 +72,10 @@ export default function CategoryCard({
   const isPositive = category.change >= 0
 
   return (
-    <div
+    <button
+      type="button"
       onClick={onClick}
-      className="card p-5 flex flex-col gap-3 hover:shadow-lg dark:hover:border-[#3D3C54] transition-all duration-200 cursor-pointer group">
+      className="card w-full text-left p-5 flex flex-col gap-3 hover:shadow-lg dark:hover:border-[#3D3C54] transition-all duration-200 cursor-pointer group">
       {/* Icon + badge */}
       <div className="flex items-start justify-between">
         <div
@@ -146,6 +147,6 @@ export default function CategoryCard({
           <p className="text-[10px] text-gray-400 dark:text-gray-600">of total</p>
         </div>
       </div>
-    </div>
+    </button>
   )
 }

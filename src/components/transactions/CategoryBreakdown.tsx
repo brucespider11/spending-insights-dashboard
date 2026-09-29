@@ -1,42 +1,43 @@
 import { useState, useMemo } from 'react'
 import { ChevronUp, ChevronDown, ChevronsUpDown } from 'lucide-react'
 import type { CustomerProfile } from '@/data/customers'
+import { CHART } from '@/lib/chartColors'
 
 type Tab = 'income' | 'expenses'
 type SortOrder = 'default' | 'desc' | 'asc'
 
 const INCOME_BREAKDOWN: Record<string, { name: string; color: string; pct: number }[]> = {
   Youth: [
-    { name: 'Salary', color: '#10b981', pct: 0.95 },
+    { name: 'Salary', color: CHART.income, pct: 0.95 },
     { name: 'Other Income', color: '#9ca3af', pct: 0.05 },
   ],
   'Young Professional': [
-    { name: 'Salary', color: '#10b981', pct: 0.88 },
+    { name: 'Salary', color: CHART.income, pct: 0.88 },
     { name: 'Annual Bonus', color: '#f59e0b', pct: 0.12 },
   ],
   Professional: [
-    { name: 'Salary', color: '#10b981', pct: 0.83 },
+    { name: 'Salary', color: CHART.income, pct: 0.83 },
     { name: 'Annual Bonus', color: '#f59e0b', pct: 0.12 },
     { name: 'Investment Returns', color: '#3b82f6', pct: 0.05 },
   ],
   Family: [
-    { name: 'Salary', color: '#10b981', pct: 0.8 },
+    { name: 'Salary', color: CHART.income, pct: 0.8 },
     { name: 'Annual Bonus', color: '#f59e0b', pct: 0.12 },
     { name: 'Investment Returns', color: '#3b82f6', pct: 0.05 },
     { name: 'Other Income', color: '#9ca3af', pct: 0.03 },
   ],
   'Business Owner': [
-    { name: 'Business Income', color: '#10b981', pct: 0.75 },
+    { name: 'Business Income', color: CHART.income, pct: 0.75 },
     { name: 'Dividends', color: '#f59e0b', pct: 0.15 },
     { name: 'Rental Income', color: '#3b82f6', pct: 0.1 },
   ],
   Retired: [
-    { name: 'Pension', color: '#10b981', pct: 0.85 },
+    { name: 'Pension', color: CHART.income, pct: 0.85 },
     { name: 'Investment Returns', color: '#3b82f6', pct: 0.1 },
     { name: 'Other Income', color: '#9ca3af', pct: 0.05 },
   ],
   Lifestyle: [
-    { name: 'Salary', color: '#10b981', pct: 0.7 },
+    { name: 'Salary', color: CHART.income, pct: 0.7 },
     { name: 'Investment Returns', color: '#3b82f6', pct: 0.15 },
     { name: 'Rental Income', color: '#8b5cf6', pct: 0.1 },
     { name: 'Other Income', color: '#9ca3af', pct: 0.05 },

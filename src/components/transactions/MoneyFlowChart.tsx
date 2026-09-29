@@ -10,6 +10,7 @@ import {
   type TooltipProps,
 } from 'recharts'
 import type { CustomerProfile } from '@/data/customers'
+import { CHART } from '@/lib/chartColors'
 import PeriodFilter, { type TimePeriod, PERIOD_MONTHS } from '@/components/common/PeriodFilter'
 
 type Tab = 'all' | 'income' | 'expenses'
@@ -162,10 +163,10 @@ export default function MoneyFlowChart({ customer }: Props) {
             />
             <Tooltip content={<CustomTooltip />} cursor={{ fill: 'currentColor', opacity: 0.04 }} />
             {(tab === 'all' || tab === 'income') && (
-              <Bar dataKey="in" fill="#10b981" radius={[4, 4, 0, 0]} maxBarSize={32} />
+              <Bar dataKey="in" fill={CHART.income} radius={[4, 4, 0, 0]} maxBarSize={32} />
             )}
             {(tab === 'all' || tab === 'expenses') && (
-              <Bar dataKey="out" fill="#f43f5e" radius={[4, 4, 0, 0]} maxBarSize={32} />
+              <Bar dataKey="out" fill={CHART.expense} radius={[4, 4, 0, 0]} maxBarSize={32} />
             )}
           </BarChart>
         </ResponsiveContainer>
