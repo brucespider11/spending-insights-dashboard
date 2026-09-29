@@ -1,3 +1,4 @@
+import { useMemo } from 'react'
 import { Link } from 'react-router-dom'
 import { DollarSign, CreditCard, TrendingUp, Hash, ArrowRight } from 'lucide-react'
 import KPICard from '@/components/dashboard/KPICard'
@@ -8,64 +9,69 @@ import InsightsPanel from '@/components/dashboard/InsightsPanel'
 import NoCustomerSelected from '@/components/common/NoCustomerSelected'
 import { useCustomer } from '@/context/CustomerContext'
 import { RISK_BADGE_BORDERED } from '@/lib/badgeStyles'
+import { CHART } from '@/lib/chartColors'
 
 export default function DashboardPage() {
   const { customer } = useCustomer()
+
+  // useMemo must be called before the early-return to satisfy the rules of hooks
+  const kpiCards = useMemo(() => {
+    if (!customer) return []
+    const avgTx = Math.round(customer.totalSpend / customer.transactionCount)
+    const netSavings = customer.monthlyIncome * 12 - customer.totalSpend
+    return [
+      {
+        icon: <DollarSign size={18} className="text-brand-600 dark:text-brand-400" />,
+        iconBg: 'bg-brand-100 dark:bg-brand-600/20',
+        label: 'Total YTD spend',
+        value: `R ${customer.totalSpend.toLocaleString()}`,
+        change: customer.spendChange,
+        to: '/spending-trends',
+        sparkData: customer.monthlyTrend.map((m) => ({ v: m.amount, label: m.month })),
+        lineColor: CHART.brand,
+      },
+      {
+        icon: <Hash size={18} className="text-blue-600 dark:text-blue-400" />,
+        iconBg: 'bg-blue-100 dark:bg-blue-600/20',
+        label: 'Transactions',
+        value: customer.transactionCount.toLocaleString(),
+        to: '/transactions',
+        sparkFormat: 'count' as const,
+        sparkData: customer.monthlyTrend.map((m, i) => ({
+          v: Math.round(m.amount / avgTx) + i * 2,
+          label: m.month,
+        })),
+        lineColor: '#3b82f6',
+      },
+      {
+        icon: <TrendingUp size={18} className="text-emerald-600 dark:text-emerald-400" />,
+        iconBg: 'bg-emerald-100 dark:bg-emerald-600/20',
+        label: 'Net savings (YTD)',
+        value: `${netSavings < 0 ? '−' : ''}R ${Math.abs(netSavings).toLocaleString()}`,
+        accent: netSavings < 0 ? 'text-rose-600 dark:text-rose-400' : undefined,
+        to: '/transactions',
+        sparkData: customer.monthlyTrend.map((m) => ({
+          v: customer.monthlyIncome - m.amount,
+          label: m.month,
+        })),
+        lineColor: CHART.income,
+      },
+      {
+        icon: <CreditCard size={18} className="text-amber-600 dark:text-amber-400" />,
+        iconBg: 'bg-amber-100 dark:bg-amber-600/20',
+        label: 'Avg. transaction',
+        value: `R ${avgTx.toLocaleString()}`,
+        to: '/transactions',
+        sparkData: customer.monthlyTrend.map((m) => ({
+          v: Math.round(m.amount / (customer.transactionCount / 12)),
+          label: m.month,
+        })),
+        lineColor: '#f59e0b',
+      },
+    ]
+  }, [customer])
+
   if (!customer) return <NoCustomerSelected />
-
-  const avgTx = Math.round(customer.totalSpend / customer.transactionCount)
-  const netSavings = customer.monthlyIncome * 12 - customer.totalSpend
-
-  const KPI_CARDS = [
-    {
-      icon: <DollarSign size={18} className="text-brand-600 dark:text-brand-400" />,
-      iconBg: 'bg-brand-100 dark:bg-brand-600/20',
-      label: 'Total YTD spend',
-      value: `R ${customer.totalSpend.toLocaleString()}`,
-      change: customer.spendChange,
-      to: '/spending-trends',
-      sparkData: customer.monthlyTrend.map((m) => ({ v: m.amount, label: m.month })),
-      lineColor: '#7c3aed',
-    },
-    {
-      icon: <Hash size={18} className="text-blue-600 dark:text-blue-400" />,
-      iconBg: 'bg-blue-100 dark:bg-blue-600/20',
-      label: 'Transactions',
-      value: customer.transactionCount.toLocaleString(),
-      to: '/transactions',
-      sparkFormat: 'count' as const,
-      sparkData: customer.monthlyTrend.map((m, i) => ({
-        v: Math.round(m.amount / avgTx) + i * 2,
-        label: m.month,
-      })),
-      lineColor: '#3b82f6',
-    },
-    {
-      icon: <TrendingUp size={18} className="text-emerald-600 dark:text-emerald-400" />,
-      iconBg: 'bg-emerald-100 dark:bg-emerald-600/20',
-      label: 'Net savings (YTD)',
-      value: `${netSavings < 0 ? '−' : ''}R ${Math.abs(netSavings).toLocaleString()}`,
-      accent: netSavings < 0 ? 'text-rose-600 dark:text-rose-400' : undefined,
-      to: '/transactions',
-      sparkData: customer.monthlyTrend.map((m) => ({
-        v: customer.monthlyIncome - m.amount,
-        label: m.month,
-      })),
-      lineColor: '#10b981',
-    },
-    {
-      icon: <CreditCard size={18} className="text-amber-600 dark:text-amber-400" />,
-      iconBg: 'bg-amber-100 dark:bg-amber-600/20',
-      label: 'Avg. transaction',
-      value: `R ${avgTx.toLocaleString()}`,
-      to: '/transactions',
-      sparkData: customer.monthlyTrend.map((m) => ({
-        v: Math.round(m.amount / (customer.transactionCount / 12)),
-        label: m.month,
-      })),
-      lineColor: '#f59e0b',
-    },
-  ]
 
   return (
     <div className="space-y-6 max-w-[1400px]">
@@ -118,7 +124,7 @@ export default function DashboardPage() {
 
       {/* KPI row */}
       <div className="grid grid-cols-2 xl:grid-cols-4 gap-4">
-        {KPI_CARDS.map((card) => (
+        {kpiCards.map((card) => (
           <KPICard key={card.label} {...card} />
         ))}
       </div>

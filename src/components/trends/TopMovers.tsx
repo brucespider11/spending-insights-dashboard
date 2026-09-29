@@ -36,6 +36,7 @@ export default function TopMovers({ customer }: Props) {
   const decreases = movers.filter((m) => m.change < 0).sort((a, b) => a.change - b.change)
 
   const list = tab === 'increases' ? increases : decreases
+  const maxAmt = list.length ? Math.max(...list.map((m) => Math.abs(m.amount))) : 1
 
   return (
     <div className="card p-6 flex flex-col gap-5">
@@ -89,7 +90,6 @@ export default function TopMovers({ customer }: Props) {
               list.map((item, i) => {
                 const isPositive = item.change > 0
                 const absAmt = Math.abs(item.amount)
-                const maxAmt = Math.max(...list.map((m) => Math.abs(m.amount)))
                 const barPct = (absAmt / maxAmt) * 100
 
                 return (

@@ -23,7 +23,17 @@ export default function MerchantInsightsPage() {
   if (!customer) return <NoCustomerSelected />
 
   const data = MERCHANT_DATA[customer.cif]
-  if (!data) return <NoCustomerSelected />
+  if (!data)
+    return (
+      <div className="flex flex-col items-center justify-center min-h-[calc(100vh-140px)] gap-3 text-center px-4">
+        <p className="text-base font-semibold text-gray-700 dark:text-gray-300">
+          No merchant data available
+        </p>
+        <p className="text-sm text-gray-400 dark:text-gray-600">
+          No tracked merchants found for {customer.name}.
+        </p>
+      </div>
+    )
 
   const nMonths = PERIOD_MONTHS[timePeriod]
   const periodLabel = PERIOD_LABELS[timePeriod]

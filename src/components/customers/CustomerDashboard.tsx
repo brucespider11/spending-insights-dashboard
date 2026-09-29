@@ -255,9 +255,9 @@ export default function CustomerDashboard({ customer, onBack }: Props) {
                       })
                     }
                     onMouseLeave={() => setHovered(null)}>
-                    {customer.categories.map((cat, i) => (
+                    {customer.categories.map((cat) => (
                       <Cell
-                        key={i}
+                        key={cat.name}
                         fill={cat.color}
                         opacity={hovered && hovered.name !== cat.name ? 0.4 : 1}
                         style={{ transition: 'opacity 150ms' }}

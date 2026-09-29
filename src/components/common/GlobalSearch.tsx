@@ -78,13 +78,13 @@ export default function GlobalSearch() {
     return () => document.removeEventListener('mousedown', handler)
   }, [close])
 
-  const filteredPages = query.trim()
-    ? PAGES.filter((p) => p.label.toLowerCase().includes(query.toLowerCase()))
+  const trimmed = query.trim()
+
+  const filteredPages = trimmed
+    ? PAGES.filter((p) => p.label.toLowerCase().includes(trimmed.toLowerCase()))
     : PAGES
 
-  const filteredCustomers = query.trim()
-    ? CUSTOMERS.filter((c) => matchesQuery(c, query.trim()))
-    : CUSTOMERS
+  const filteredCustomers = trimmed ? CUSTOMERS.filter((c) => matchesQuery(c, trimmed)) : []
 
   const handleSelectCustomer = (c: CustomerProfile) => {
     setCustomer(c)

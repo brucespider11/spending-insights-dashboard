@@ -22,13 +22,62 @@ export default function App() {
             <ErrorBoundary>
               <MainLayout>
                 <Routes>
-                  <Route path="/" element={<DashboardPage />} />
-                  <Route path="/transactions" element={<TransactionsPage />} />
-                  <Route path="/categories" element={<CategoriesPage />} />
-                  <Route path="/spending-trends" element={<SpendingTrendsPage />} />
-                  <Route path="/customers" element={<CustomerOverviewPage />} />
-                  <Route path="/merchants" element={<MerchantInsightsPage />} />
-                  <Route path="/settings" element={<SettingsPage />} />
+                  <Route
+                    path="/"
+                    element={
+                      <ErrorBoundary>
+                        <DashboardPage />
+                      </ErrorBoundary>
+                    }
+                  />
+                  <Route
+                    path="/transactions"
+                    element={
+                      <ErrorBoundary>
+                        <TransactionsPage />
+                      </ErrorBoundary>
+                    }
+                  />
+                  <Route
+                    path="/categories"
+                    element={
+                      <ErrorBoundary>
+                        <CategoriesPage />
+                      </ErrorBoundary>
+                    }
+                  />
+                  <Route
+                    path="/spending-trends"
+                    element={
+                      <ErrorBoundary>
+                        <SpendingTrendsPage />
+                      </ErrorBoundary>
+                    }
+                  />
+                  <Route
+                    path="/customers"
+                    element={
+                      <ErrorBoundary>
+                        <CustomerOverviewPage />
+                      </ErrorBoundary>
+                    }
+                  />
+                  <Route
+                    path="/merchants"
+                    element={
+                      <ErrorBoundary>
+                        <MerchantInsightsPage />
+                      </ErrorBoundary>
+                    }
+                  />
+                  <Route
+                    path="/settings"
+                    element={
+                      <ErrorBoundary>
+                        <SettingsPage />
+                      </ErrorBoundary>
+                    }
+                  />
                   <Route path="*" element={<NotFoundPage />} />
                 </Routes>
               </MainLayout>

@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useMemo } from 'react'
 import {
   LineChart,
   Line,
@@ -61,28 +61,37 @@ export default function CategoryTrendChart({ customer }: Props) {
   const [timePeriod, setTimePeriod] = useState<TimePeriod>('12M')
 
   const nMonths = PERIOD_MONTHS[timePeriod]
-  const trendSlice = customer.monthlyTrend.slice(-nMonths)
 
   // Top 5 categories by spend, excluding the catch-all 'Other'
-  const topCategories = customer.categories.filter((c) => c.name !== 'Other').slice(0, 5)
+  const topCategories = useMemo(
+    () => customer.categories.filter((c) => c.name !== 'Other').slice(0, 5),
+    [customer]
+  )
 
-  const series: Series[] = topCategories.map((cat) => ({
-    key: cat.name.toLowerCase(),
-    label: cat.name,
-    color: cat.color,
-  }))
+  const series: Series[] = useMemo(
+    () =>
+      topCategories.map((cat) => ({
+        key: cat.name.toLowerCase(),
+        label: cat.name,
+        color: cat.color,
+      })),
+    [topCategories]
+  )
 
   // Distribute each category's annual total across the selected months using
   // the customer's own monthly spend pattern as the seasonal weight
-  const totalSpend = trendSlice.reduce((s, m) => s + m.amount, 0)
-  const categoryMonthly = trendSlice.map((m) => {
-    const weight = totalSpend > 0 ? m.amount / totalSpend : 1 / 12
-    const row: Record<string, number | string> = { month: m.month }
-    topCategories.forEach((cat) => {
-      row[cat.name.toLowerCase()] = Math.round(cat.amount * (nMonths / 12) * weight)
+  const categoryMonthly = useMemo(() => {
+    const trendSlice = customer.monthlyTrend.slice(-nMonths)
+    const totalSpend = trendSlice.reduce((s, m) => s + m.amount, 0)
+    return trendSlice.map((m) => {
+      const weight = totalSpend > 0 ? m.amount / totalSpend : 1 / 12
+      const row: Record<string, number | string> = { month: m.month }
+      topCategories.forEach((cat) => {
+        row[cat.name.toLowerCase()] = Math.round(cat.amount * (nMonths / 12) * weight)
+      })
+      return row
     })
-    return row
-  })
+  }, [customer, nMonths, topCategories])
 
   const toggle = (key: string) =>
     setHidden((prev) => {
