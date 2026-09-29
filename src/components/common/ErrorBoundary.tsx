@@ -1,4 +1,4 @@
-import { Component, type ReactNode } from 'react'
+import { Component, type ReactNode, type ErrorInfo } from 'react'
 import { AlertTriangle } from 'lucide-react'
 
 interface Props {
@@ -15,6 +15,11 @@ export class ErrorBoundary extends Component<Props, State> {
 
   static getDerivedStateFromError(error: Error): State {
     return { error }
+  }
+
+  componentDidCatch(error: Error, info: ErrorInfo) {
+    // Integration point for an error reporting service (e.g. Sentry).
+    console.error('[ErrorBoundary]', error, info.componentStack)
   }
 
   reset = () => this.setState({ error: null })

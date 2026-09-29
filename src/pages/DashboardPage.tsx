@@ -7,6 +7,7 @@ import TopMerchantsWidget from '@/components/dashboard/TopMerchantsWidget'
 import InsightsPanel from '@/components/dashboard/InsightsPanel'
 import NoCustomerSelected from '@/components/common/NoCustomerSelected'
 import { useCustomer } from '@/context/CustomerContext'
+import { RISK_BADGE_BORDERED } from '@/lib/badgeStyles'
 
 export default function DashboardPage() {
   const { customer } = useCustomer()
@@ -66,25 +67,6 @@ export default function DashboardPage() {
     },
   ]
 
-  const riskColors: Record<string, { bg: string; text: string; border: string }> = {
-    Low: {
-      bg: 'bg-emerald-50 dark:bg-emerald-500/10',
-      text: 'text-emerald-700 dark:text-emerald-400',
-      border: 'border-emerald-200 dark:border-emerald-500/20',
-    },
-    Medium: {
-      bg: 'bg-amber-50 dark:bg-amber-500/10',
-      text: 'text-amber-700 dark:text-amber-400',
-      border: 'border-amber-200 dark:border-amber-500/20',
-    },
-    High: {
-      bg: 'bg-rose-50 dark:bg-rose-500/10',
-      text: 'text-rose-700 dark:text-rose-400',
-      border: 'border-rose-200 dark:border-rose-500/20',
-    },
-  }
-  const risk = riskColors[customer.riskProfile]
-
   return (
     <div className="space-y-6 max-w-[1400px]">
       {/* Breadcrumb */}
@@ -113,7 +95,7 @@ export default function DashboardPage() {
               {customer.segment}
             </span>
             <span
-              className={`text-[11px] font-semibold px-2.5 py-1 rounded-full border ${risk.bg} ${risk.text} ${risk.border}`}>
+              className={`text-[11px] font-semibold px-2.5 py-1 rounded-full border ${RISK_BADGE_BORDERED[customer.riskProfile]}`}>
               {customer.riskProfile} risk
             </span>
           </div>

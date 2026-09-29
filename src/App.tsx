@@ -11,6 +11,7 @@ import SpendingTrendsPage from './pages/SpendingTrendsPage'
 import CustomerOverviewPage from './pages/CustomerOverviewPage'
 import MerchantInsightsPage from './pages/MerchantInsightsPage'
 import SettingsPage from './pages/SettingsPage'
+import NotFoundPage from './pages/NotFoundPage'
 
 export default function App() {
   return (
@@ -28,6 +29,7 @@ export default function App() {
                   <Route path="/customers" element={<CustomerOverviewPage />} />
                   <Route path="/merchants" element={<MerchantInsightsPage />} />
                   <Route path="/settings" element={<SettingsPage />} />
+                  <Route path="*" element={<NotFoundPage />} />
                 </Routes>
               </MainLayout>
             </ErrorBoundary>

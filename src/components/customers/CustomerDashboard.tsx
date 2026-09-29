@@ -13,18 +13,7 @@ import {
   type TooltipProps,
 } from 'recharts'
 import type { CustomerProfile, CustomerCategory } from '@/data/customers'
-
-const RISK_STYLES = {
-  Low: 'bg-emerald-100 dark:bg-emerald-500/15 text-emerald-700 dark:text-emerald-400',
-  Medium: 'bg-amber-100 dark:bg-amber-500/15 text-amber-700 dark:text-amber-400',
-  High: 'bg-rose-100 dark:bg-rose-500/15 text-rose-700 dark:text-rose-400',
-}
-
-const STATUS_STYLES = {
-  Active: 'bg-emerald-100 dark:bg-emerald-500/15 text-emerald-700 dark:text-emerald-400',
-  Dormant: 'bg-gray-100 dark:bg-white/10 text-gray-600 dark:text-gray-400',
-  Restricted: 'bg-rose-100 dark:bg-rose-500/15 text-rose-700 dark:text-rose-400',
-}
+import { RISK_BADGE, STATUS_BADGE } from '@/lib/badgeStyles'
 
 function TrendTooltip({ active, payload, label }: TooltipProps<number, string>) {
   if (!active || !payload?.length) return null
@@ -117,11 +106,11 @@ export default function CustomerDashboard({ customer, onBack }: Props) {
 
               <div className="flex items-center gap-2 flex-wrap">
                 <span
-                  className={`text-xs font-semibold px-2.5 py-1 rounded-full ${STATUS_STYLES[customer.status]}`}>
+                  className={`text-xs font-semibold px-2.5 py-1 rounded-full ${STATUS_BADGE[customer.status]}`}>
                   {customer.status}
                 </span>
                 <span
-                  className={`text-xs font-semibold px-2.5 py-1 rounded-full ${RISK_STYLES[customer.riskProfile]}`}>
+                  className={`text-xs font-semibold px-2.5 py-1 rounded-full ${RISK_BADGE[customer.riskProfile]}`}>
                   {customer.riskProfile} Risk
                 </span>
                 <span className="text-xs font-semibold px-2.5 py-1 rounded-full bg-gray-100 dark:bg-white/10 text-gray-600 dark:text-gray-400">

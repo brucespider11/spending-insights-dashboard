@@ -7,11 +7,7 @@ interface CustomerContextType {
   clearCustomer: () => void
 }
 
-const CustomerContext = createContext<CustomerContextType>({
-  customer: null,
-  setCustomer: () => {},
-  clearCustomer: () => {},
-})
+const CustomerContext = createContext<CustomerContextType | null>(null)
 
 export function CustomerProvider({ children }: { children: ReactNode }) {
   const [customer, setCustomerState] = useState<CustomerProfile | null>(null)
@@ -20,7 +16,7 @@ export function CustomerProvider({ children }: { children: ReactNode }) {
     <CustomerContext.Provider
       value={{
         customer,
-        setCustomer: (c) => setCustomerState(c),
+        setCustomer: setCustomerState,
         clearCustomer: () => setCustomerState(null),
       }}>
       {children}
@@ -28,4 +24,8 @@ export function CustomerProvider({ children }: { children: ReactNode }) {
   )
 }
 
-export const useCustomer = () => useContext(CustomerContext)
+export function useCustomer(): CustomerContextType {
+  const ctx = useContext(CustomerContext)
+  if (!ctx) throw new Error('useCustomer must be used inside <CustomerProvider>')
+  return ctx
+}

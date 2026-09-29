@@ -93,9 +93,11 @@ function SidebarContent({ forceExpanded = false }: { forceExpanded?: boolean }) 
           if (hasChildren) {
             return (
               <div key={item.label}>
-                <div
-                  className={`sidebar-link ${isExpanded ? '' : 'justify-center px-0'}`}
+                <button
+                  type="button"
+                  className={`sidebar-link w-full ${isExpanded ? '' : 'justify-center px-0'}`}
                   onClick={() => toggleExpand(item.label)}
+                  aria-expanded={isItemExpanded}
                   title={!isExpanded ? item.label : undefined}>
                   <span className="flex-shrink-0 text-gray-500 dark:text-gray-400">
                     {item.icon}
@@ -108,7 +110,7 @@ function SidebarContent({ forceExpanded = false }: { forceExpanded?: boolean }) 
                       </span>
                     </>
                   )}
-                </div>
+                </button>
 
                 {isExpanded && isItemExpanded && (
                   <div className="mt-0.5 space-y-0.5">

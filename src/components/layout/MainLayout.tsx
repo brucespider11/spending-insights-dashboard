@@ -1,4 +1,4 @@
-import { type ReactNode } from 'react'
+import { type ReactNode, useEffect } from 'react'
 import Sidebar from './Sidebar'
 import Header from './Header'
 import { useSidebar } from '@/context/SidebarContext'
@@ -15,11 +15,14 @@ export default function MainLayout({ children }: MainLayoutProps) {
   // On mobile there is no persistent sidebar — offset is 0
   const sidebarOffset = !isDesktop ? 0 : collapsed ? 64 : 240
 
+  // Keep --sidebar-offset in sync so the fixed Header can track sidebar width without a
+  // <style> tag in the render tree (which causes extra style recalculations every render).
+  useEffect(() => {
+    document.documentElement.style.setProperty('--sidebar-offset', `${sidebarOffset}px`)
+  }, [sidebarOffset])
+
   return (
     <div className="min-h-screen bg-slate-100 dark:bg-[#0F0E1A]">
-      {/* Header is position:fixed so it can't inherit padding — CSS variable bridges the gap */}
-      <style>{`:root { --sidebar-offset: ${sidebarOffset}px; }`}</style>
-
       <Sidebar />
       <Header />
 

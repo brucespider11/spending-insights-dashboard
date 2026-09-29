@@ -11,6 +11,7 @@ import {
 } from 'recharts'
 import type { CustomerProfile } from '@/data/customers'
 import PeriodFilter, { type TimePeriod, PERIOD_MONTHS } from '@/components/common/PeriodFilter'
+import { CHART } from '@/lib/chartColors'
 
 interface Props {
   customer: CustomerProfile
@@ -70,6 +71,11 @@ export default function SpendingChart({ customer }: Props) {
   const [period, setPeriod] = useState<TimePeriod>('12M')
   const allData = buildChartData(customer)
   const data = allData.slice(-PERIOD_MONTHS[period])
+
+  // SVG defs IDs are global in the DOM — scoping by CIF prevents gradient theft
+  // when multiple chart instances exist on the same page.
+  const incomeGradId = `income-grad-${customer.cif}`
+  const spendGradId = `spend-grad-${customer.cif}`
   const totalSaved = data.reduce((s, d) => s + (d.income - d.spend), 0)
   const savingsRate = Math.round((totalSaved / data.reduce((s, d) => s + d.income, 0)) * 100)
 
@@ -111,13 +117,13 @@ export default function SpendingChart({ customer }: Props) {
         <ResponsiveContainer width="100%" height="100%">
           <AreaChart data={data} margin={{ top: 4, right: 4, bottom: 0, left: -10 }}>
             <defs>
-              <linearGradient id="incomeGrad" x1="0" y1="0" x2="0" y2="1">
-                <stop offset="5%" stopColor="#10b981" stopOpacity={0.2} />
-                <stop offset="95%" stopColor="#10b981" stopOpacity={0} />
+              <linearGradient id={incomeGradId} x1="0" y1="0" x2="0" y2="1">
+                <stop offset="5%" stopColor={CHART.income} stopOpacity={0.2} />
+                <stop offset="95%" stopColor={CHART.income} stopOpacity={0} />
               </linearGradient>
-              <linearGradient id="spendGrad" x1="0" y1="0" x2="0" y2="1">
-                <stop offset="5%" stopColor="#7c3aed" stopOpacity={0.25} />
-                <stop offset="95%" stopColor="#7c3aed" stopOpacity={0} />
+              <linearGradient id={spendGradId} x1="0" y1="0" x2="0" y2="1">
+                <stop offset="5%" stopColor={CHART.brand} stopOpacity={0.25} />
+                <stop offset="95%" stopColor={CHART.brand} stopOpacity={0} />
               </linearGradient>
             </defs>
             <CartesianGrid
@@ -140,25 +146,25 @@ export default function SpendingChart({ customer }: Props) {
             />
             <Tooltip
               content={<CustomTooltip />}
-              cursor={{ stroke: '#7c3aed', strokeWidth: 1, strokeDasharray: '4 4' }}
+              cursor={{ stroke: CHART.brand, strokeWidth: 1, strokeDasharray: '4 4' }}
             />
             <Area
               type="monotone"
               dataKey="income"
-              stroke="#10b981"
+              stroke={CHART.income}
               strokeWidth={2}
-              fill="url(#incomeGrad)"
+              fill={`url(#${incomeGradId})`}
               dot={false}
-              activeDot={{ r: 4, fill: '#10b981', strokeWidth: 2, stroke: '#fff' }}
+              activeDot={{ r: 4, fill: CHART.income, strokeWidth: 2, stroke: '#fff' }}
             />
             <Area
               type="monotone"
               dataKey="spend"
-              stroke="#7c3aed"
+              stroke={CHART.brand}
               strokeWidth={2}
-              fill="url(#spendGrad)"
+              fill={`url(#${spendGradId})`}
               dot={false}
-              activeDot={{ r: 4, fill: '#7c3aed', strokeWidth: 2, stroke: '#fff' }}
+              activeDot={{ r: 4, fill: CHART.brand, strokeWidth: 2, stroke: '#fff' }}
             />
           </AreaChart>
         </ResponsiveContainer>

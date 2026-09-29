@@ -7,12 +7,7 @@ interface SidebarContextType {
   setMobileOpen: (open: boolean) => void
 }
 
-const SidebarContext = createContext<SidebarContextType>({
-  collapsed: false,
-  toggleCollapsed: () => {},
-  mobileOpen: false,
-  setMobileOpen: () => {},
-})
+const SidebarContext = createContext<SidebarContextType | null>(null)
 
 export function SidebarProvider({ children }: { children: ReactNode }) {
   const [collapsed, setCollapsed] = useState(false)
@@ -27,4 +22,8 @@ export function SidebarProvider({ children }: { children: ReactNode }) {
   )
 }
 
-export const useSidebar = () => useContext(SidebarContext)
+export function useSidebar(): SidebarContextType {
+  const ctx = useContext(SidebarContext)
+  if (!ctx) throw new Error('useSidebar must be used inside <SidebarProvider>')
+  return ctx
+}

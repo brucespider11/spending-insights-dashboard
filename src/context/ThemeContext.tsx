@@ -9,45 +9,36 @@ interface ThemeContextType {
   toggleTheme: () => void
 }
 
-const ThemeContext = createContext<ThemeContextType>({
-  theme: 'light',
-  colorMode: 'light',
-  setColorMode: () => {},
-  toggleTheme: () => {},
-})
+const ThemeContext = createContext<ThemeContextType | null>(null)
 
 export function ThemeProvider({ children }: { children: ReactNode }) {
-  // colorMode drives the settings UI; theme drives the <html> class — kept in sync via setColorMode
-  const [colorMode, setColorModeState] = useState<ColorMode>(() => {
+  const [theme, setThemeState] = useState<ColorMode>(() => {
     const stored = localStorage.getItem('csi-theme')
     if (stored === 'dark' || stored === 'light') return stored
     return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light'
   })
 
-  const [theme, setTheme] = useState<ColorMode>(() => {
-    const stored = localStorage.getItem('csi-theme')
-    if (stored === 'dark' || stored === 'light') return stored
-    return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light'
-  })
-
-  // Apply class to <html> whenever resolved theme changes
   useEffect(() => {
     document.documentElement.classList.toggle('dark', theme === 'dark')
   }, [theme])
 
   const setColorMode = (mode: ColorMode) => {
-    setColorModeState(mode)
-    setTheme(mode)
+    setThemeState(mode)
     localStorage.setItem('csi-theme', mode)
   }
 
   const toggleTheme = () => setColorMode(theme === 'light' ? 'dark' : 'light')
 
   return (
-    <ThemeContext.Provider value={{ theme, colorMode, setColorMode, toggleTheme }}>
+    // colorMode is aliased to theme — both consumers see the same value via a single state
+    <ThemeContext.Provider value={{ theme, colorMode: theme, setColorMode, toggleTheme }}>
       {children}
     </ThemeContext.Provider>
   )
 }
 
-export const useTheme = () => useContext(ThemeContext)
+export function useTheme(): ThemeContextType {
+  const ctx = useContext(ThemeContext)
+  if (!ctx) throw new Error('useTheme must be used inside <ThemeProvider>')
+  return ctx
+}
